@@ -379,6 +379,7 @@ Apply with `git -C crdroid/<repo> apply patches/<file>`:
 | `frameworks-base-systemui-udfps-moto-panel-hbm.patch` | `frameworks/base` |
 | `frameworks-opt-telephony-telephonymetrics-stub.patch` | `frameworks/opt/telephony` |
 | `vendor-apn-yettel-stock-apns.patch` | `vendor/apn` |
+| `bootable-recovery-vienna-fixes.patch` | `bootable/recovery` |
 
 ## 2026-10-04: Bluetooth audio
 
@@ -402,3 +403,30 @@ Not yet tested: Wi-Fi calling, NFC, charging and battery life, video calls.
 Open: the recovery on the device is the permissive debug `perm3`
 (replace it with a clean one); the next build should include
 `persist.bluetooth.a2dp_offload.disabled=true` from device.mk.
+
+## 2026-10-04: clean Lineage recovery
+
+- `perm3` was `v1` plus debug-only changes: permissive `adbd`/`recovery`/
+  `shell`/`su` domains, pstore exposed in `init.rc`, `vienna_dbg` kmsg markers
+  and `androidboot.init_fatal_reboot_target=recovery` on the kernel command line.
+- The clean recovery is `v1`'s layout (stock enforcing sepolicy, stock
+  cmdline, unchanged normal ramdisk), generated reproducibly by
+  `tools/make_recovery_fragment.py`. See `recovery-artifacts/clean/README.md`.
+- "Reboot does nothing" root cause: the stock policy denies the recovery a
+  `NETLINK_KOBJECT_UEVENT` socket ("Vold: Unable to create uevent socket:
+  Permission denied"), so `NetlinkManager::start()` fails. On every reboot or
+  power-off, `VolumeManager::stop()` then called `mHandler->stop()` on an
+  uninitialized/null handler, causing SIGSEGV, and init restarted the recovery
+  (USB never dropped). Fixed in `bootable/recovery`, saved as
+  `patches/bootable-recovery-vienna-fixes.patch` (also keeps the
+  `LD_LIBRARY_PATH` unset for sideload).
+- Debug method that worked: under enforcing policy, reboot from recovery to
+  crDroid with `adb reboot`, then `adb shell cat /sys/fs/pstore/console-ramoops-0`
+  (shell is in group `log`). Kernel rate limiting hid the important lines;
+  `--extra-cmdline printk.devkmsg=on` on the vendor_boot fixes that (init
+  cannot write the printk sysctls under the stock policy).
+- Verified on the phone: menu works, "Advanced → Reboot to bootloader" and
+  "Reboot system now" work, crDroid boots. Current slot A: `vendor_boot_a` =
+  `recovery-artifacts/clean/clean-vendor_boot.img`, `vbmeta_a` =
+  `recovery-artifacts/clean/clean-vbmeta-crdroid.img` (perm3-apn root with
+  the clean vendor_boot digest).

@@ -6,8 +6,7 @@ system_ext and product images run on top of the phone's unmodified stock
 Motorola boot, vendor and kernel images (firmware `W1UIS36H.39-25-8`).
 
 > **Status: experimental, single-device tested.** It runs as the daily system on
-> one XT2409-1 RETEU. There is no release build, no OTA package and no custom
-> recovery yet. Read the whole [Installing](#installing) section before you
+> one XT2409-1 RETEU. There is no release build or OTA package yet. Read the whole [Installing](#installing) section before you
 > touch your phone; you need to be comfortable restoring stock firmware with
 > fastboot.
 
@@ -35,15 +34,16 @@ Tested on 2026-10-04 on XT2409-1 RETEU, stock base `W1UIS36H.39-25-8`:
 | Face unlock | Works | |
 | Bluetooth, incl. audio | Works | A2DP hardware offload is disabled (software encoding) |
 | microG | Bundled | GmsCore 0.3.17 + Companion, signature spoofing via crDroid |
+| Lineage recovery (optional) | Works | Enforcing stock SELinux policy; menu, reboot and sideload; no `adb shell` ([details](recovery-artifacts/clean/README.md)) |
 
 Not tested yet: Wi-Fi calling, video calls, NFC, charging and battery life,
 OTA updates. Untested does not mean broken. Reports are welcome.
 
 ### Known issues
 
-- **No custom recovery.** Motorola's stock recovery stays in place. A Lineage
-  recovery for this firmware is still in development (see the
-  [bring-up log](docs/BRINGUP_LOG.md)).
+- **The Lineage recovery is built separately** and flashed into
+  `vendor_boot`; see [its README](recovery-artifacts/clean/README.md). The
+  install steps below keep Motorola's stock recovery.
 - **A2DP hardware offload is off.** With offload on, headphones connect but
   play silence. Software encoding works but may use slightly more power.
 - **Fingerprint dim level is estimated.** During a scan the rest of the screen
@@ -90,6 +90,7 @@ of several hundred GB and several hours of build time.
    git -C crdroid/frameworks/base apply "$PWD"/patches/frameworks-base-systemui-udfps-moto-panel-hbm.patch
    git -C crdroid/frameworks/opt/telephony apply "$PWD"/patches/frameworks-opt-telephony-telephonymetrics-stub.patch
    git -C crdroid/vendor/apn apply "$PWD"/patches/vendor-apn-yettel-stock-apns.patch
+   git -C crdroid/bootable/recovery apply "$PWD"/patches/bootable-recovery-vienna-fixes.patch
    ```
 
 4. **Fetch the arm64 WebView** (the checkout contains a Git LFS pointer):
@@ -146,8 +147,8 @@ python3 tools/update_root_vbmeta_product.py \
 Every product.img rebuild needs a new root vbmeta. Otherwise the phone hangs
 at the Motorola logo with no USB.
 
-> The developer's phone boots with a modified `vendor_boot` (a debug
-> recovery) and a matching root vbmeta. This exact stock-`vendor_boot`
+> The developer's phone boots with the Lineage recovery in `vendor_boot` and
+> a matching root vbmeta. This exact stock-`vendor_boot`
 > variant follows the same steps but **has not been booted yet**. If it hangs,
 > restore stock (below) and report it.
 

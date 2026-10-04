@@ -15,7 +15,7 @@ the [bring-up log](docs/BRINGUP_LOG.md).
 | microG with signature spoofing | Done |
 | Wi-Fi calling, video calls, NFC, battery and charging | Not tested |
 | Boot with stock `vendor_boot` and generated root vbmeta (public install path) | Not tested |
-| Lineage recovery for this firmware | In progress: boots only as a permissive debug build |
+| Lineage recovery for this firmware | Done (2026-10-04): enforcing stock policy; see `recovery-artifacts/clean/` |
 | Re-enable A2DP hardware offload | Open: offload starts but plays silence |
 | Flashable package (OTA ZIP or fastboot script) | Open |
 | Wider device and firmware coverage (other XT2409 SKUs) | Open: needs testers |

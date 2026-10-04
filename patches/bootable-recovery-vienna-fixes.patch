@@ -1,0 +1,61 @@
+diff --git a/recovery_main.cpp b/recovery_main.cpp
+index ad06919..06116c1 100644
+--- a/recovery_main.cpp
++++ b/recovery_main.cpp
+@@ -351,6 +351,11 @@ static void redirect_stdio(const char* filename) {
+ }
+ 
+ int main(int argc, char** argv) {
++  // vienna: the exec wrapper sets LD_LIBRARY_PATH so this binary loads its own
++  // crDroid libraries. The linker has already consumed it; clear it so helper
++  // programs we start (minadbd, e2fsck, ...) use the stock ramdisk libraries.
++  unsetenv("LD_LIBRARY_PATH");
++
+   // We don't have logcat yet under recovery; so we'll print error on screen and log to stdout
+   // (which is redirected to recovery.log) as we used to do.
+   android::base::InitLogging(argv, &UiLogger);
+diff --git a/volume_manager/NetlinkManager.cpp b/volume_manager/NetlinkManager.cpp
+index 28640e9..5dd1504 100644
+--- a/volume_manager/NetlinkManager.cpp
++++ b/volume_manager/NetlinkManager.cpp
+@@ -41,9 +41,7 @@ NetlinkManager* NetlinkManager::Instance() {
+     return sInstance;
+ }
+ 
+-NetlinkManager::NetlinkManager() {
+-    // Empty
+-}
++NetlinkManager::NetlinkManager() : mHandler(NULL), mSock(-1) {}
+ 
+ NetlinkManager::~NetlinkManager() {}
+ 
+@@ -89,15 +87,23 @@ bool NetlinkManager::start() {
+     return true;
+ 
+ out:
++    delete mHandler;
++    mHandler = NULL;
+     close(mSock);
++    mSock = -1;
+     return false;
+ }
+ 
+ void NetlinkManager::stop() {
+-    mHandler->stop();
+-    delete mHandler;
+-    mHandler = NULL;
+-
+-    close(mSock);
+-    mSock = -1;
++    // start() can fail, e.g. when the recovery SELinux policy denies the
++    // uevent socket; there is nothing to stop then.
++    if (mHandler) {
++        mHandler->stop();
++        delete mHandler;
++        mHandler = NULL;
++    }
++    if (mSock >= 0) {
++        close(mSock);
++        mSock = -1;
++    }
+ }
