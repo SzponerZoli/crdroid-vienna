@@ -11,6 +11,15 @@ Motorola boot, vendor and kernel images (firmware `W1UIS36H.39-25-8`).
 > touch your phone; you need to be comfortable restoring stock firmware with
 > fastboot.
 
+> [!WARNING]
+> **Use at your own risk.** Unlocking the bootloader and flashing this ROM can
+> void your warranty, erase your data, and leave your phone unbootable
+> ("bricked"). This is an unofficial project, not affiliated with Motorola,
+> MediaTek or the crDroid team. It is provided "as is" without warranty of any
+> kind, and the authors accept no liability for any damage or data loss (see
+> sections 7 and 8 of the [license](LICENSE)). Back up everything and keep the
+> stock firmware for your exact model at hand before you start.
+
 ## What works
 
 Tested on 2026-10-04 on XT2409-1 RETEU, stock base `W1UIS36H.39-25-8`:
