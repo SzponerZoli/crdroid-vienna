@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Keep microG push (Cloud Messaging) and location working in Doze. -->
+<config>
+    <allow-in-power-save package="com.google.android.gms"/>
+    <allow-in-data-usage-save package="com.google.android.gms"/>
+    <allow-unthrottled-location package="com.google.android.gms"/>
+</config>

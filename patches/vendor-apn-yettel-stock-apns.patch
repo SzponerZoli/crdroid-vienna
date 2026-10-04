@@ -1,0 +1,88 @@
+diff --git a/HU.xml b/HU.xml
+index 9b141e0..c22d206 100644
+--- a/HU.xml
++++ b/HU.xml
+@@ -8,70 +8,32 @@
+     <apn
+         mcc="216"
+         mnc="01"
+-        carrier="Pannon"
+-        apn="net"
+-        mmsc=""
+-        password=""
+-        port=""
+-        proxy=""
+-        type="default,supl"
+-        user=""
+-    />
+-    <apn
+-        mcc="216"
+-        mnc="01"
+-        carrier="Pannon MMS"
+-        apn="mms"
+-        mmsc="http://mmsc.pgsm.hu/"
+-        mmsport="8080"
+-        mmsproxy="193.225.154.22"
+-        password=""
+-        port=""
+-        proxy=""
+-        type="mms"
+-        user=""
++        carrier="Yettel IMS"
++        apn="ims"
++        protocol="IPV6"
++        roaming_protocol="IPV6"
++        type="ims"
++        user_visible="false"
+     />
+     <apn
+         mcc="216"
+         mnc="01"
+-        carrier="Telenor MMS"
++        carrier="Yettel MMS"
+         apn="mms"
+-        mmsc="http://mmsc.telenor.hu/"
++        authtype="0"
++        mmsc="http://mmsc.yettel.hu/"
+         mmsport="8080"
+         mmsproxy="84.225.255.1"
+-        password=""
+-        port=""
+-        proxy=""
+         type="mms"
+-        user=""
+-    />
+-    <apn
+-        mcc="216"
+-        mnc="01"
+-        carrier="Telenor Net"
+-        apn="net"
+-        type="default,supl"
+     />
+     <apn
+         mcc="216"
+         mnc="01"
+-        carrier="Telenor Net"
+-        apn="net"
+-        mmsc=""
+-        password=""
+-        port=""
+-        proxy=""
+-        type="default,supl"
+-        user=""
+-    />
+-    <apn
+-        mcc="216"
+-        mnc="01"
+-        carrier="Telenor online"
++        carrier="Yettel Online"
+         apn="online"
+-        password=""
+-        type="default,supl"
+-        user=""
++        authtype="0"
++        protocol="IPV6"
++        type="default,supl,xcap"
+     />
+     <apn
+         mcc="216"

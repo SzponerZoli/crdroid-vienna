@@ -1,0 +1,54 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Official microG release APKs from https://microg.org/fdroid/repo, signed by
+// the microG release key (SHA-256 9bd06727...d14165). crDroid's package manager
+// spoofs the Google signature only for these two package names. The APKs are
+// git-ignored; see README.md for download and checksum verification.
+
+android_app_import {
+    name: "GmsCore",
+    apk: "GmsCore.apk",
+    presigned: true,
+    privileged: true,
+    product_specific: true,
+    dex_preopt: {
+        enabled: false,
+    },
+    required: [
+        "privapp-permissions-microg.xml",
+        "default-permissions-microg.xml",
+        "sysconfig-microg.xml",
+    ],
+}
+
+android_app_import {
+    name: "FakeStore",
+    apk: "FakeStore.apk",
+    presigned: true,
+    privileged: true,
+    product_specific: true,
+    dex_preopt: {
+        enabled: false,
+    },
+}
+
+prebuilt_etc {
+    name: "privapp-permissions-microg.xml",
+    src: "privapp-permissions-microg.xml",
+    sub_dir: "permissions",
+    product_specific: true,
+}
+
+prebuilt_etc {
+    name: "default-permissions-microg.xml",
+    src: "default-permissions-microg.xml",
+    sub_dir: "default-permissions",
+    product_specific: true,
+}
+
+prebuilt_etc {
+    name: "sysconfig-microg.xml",
+    src: "sysconfig-microg.xml",
+    sub_dir: "sysconfig",
+    product_specific: true,
+}

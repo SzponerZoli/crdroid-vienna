@@ -1,0 +1,23 @@
+# Device reports can include firmware and build details specific to an owner.
+stock-info/
+stock-firmware/
+stock-source/
+__pycache__/
+*.pyc
+tools/bin/
+crdroid/
+device/motorola/vienna/prebuilts/
+vendor/motorola/vienna/proprietary/
+device/motorola/vienna/microg/*.apk
+
+# Built images and ramdisks are derived from Motorola stock firmware and contain
+# proprietary kernel modules, firmware and signing metadata. Never publish them.
+*.img
+*.cpio
+*.cpio.lz4
+*.zip
+
+# Local working notes and agent state
+CLAUDE.md
+.agents/
+.codex/

@@ -1,0 +1,109 @@
+{
+  "device": {
+    "marketing_name": "motorola edge 50 neo",
+    "codename": "vienna",
+    "sku": "XT2409-1",
+    "carrier": "reteu",
+    "chipset": "mt6878"
+  },
+  "rom": {
+    "name": "crDroid",
+    "version": "12",
+    "android_version": "16",
+    "manifest_url": "https://github.com/crdroidandroid/android.git",
+    "manifest_branch": "16.0",
+    "manifest_commit_observed_2026_09_28": "7aeb04f96139aca17be68cb5ad91b3204136bf52"
+  },
+  "phone_stock_build": "W1UIS36H.39-25-8",
+  "firmware": {
+    "build": "W1UIS36H.39-25-8",
+    "url": "https://mirrors.lolinet.com/firmware/lenomola/2024/vienna/official/3GB/XT2409-1_VIENNA_RETEU_16_W1UIS36H.39-25-8_subsidy-DEFAULT_regulatory-DEFAULT_cid50_CFC.xml.zip",
+    "local_file": "stock-firmware/XT2409-1_VIENNA_RETEU_16_W1UIS36H.39-25-8_CFC.xml.zip",
+    "bytes": 6903313944,
+    "sha256": "f38e07b14b1c984c44b736d7608d06be4e352b347e2ae554a470b728e81236dd"
+  },
+  "prebuilt_images": {
+    "Image.gz": {
+      "source": "stock-firmware/boot-unpacked/kernel",
+      "sha256": "0136e20c1c511acc926860eb83eafc445baf0cbea82cd2b76c42f1bbcd370d0b"
+    },
+    "boot.img": {
+      "source": "stock-firmware/extracted/boot.img",
+      "sha256": "fc7a660318443f91fddb7919489ddf89264dc158f8f79f0f08a23ac69319a59a"
+    },
+    "vendor_boot.img": {
+      "source": "stock-firmware/extracted/vendor_boot.img",
+      "sha256": "a3876fb1d1aee3c62ba78037f67c207fa65cc50b607259559e6ef37737c7071f"
+    },
+    "init_boot.img": {
+      "source": "stock-firmware/extracted/init_boot.img",
+      "sha256": "57e12f0d7d46978a12e5519f69a4044f6521337ad48d368258e4463f947163dc"
+    },
+    "dtbo.img": {
+      "source": "stock-firmware/extracted/dtbo.img",
+      "sha256": "a027c5615e57c910cdd742b6688b83e1b378b2921fda5547c700b0f4479ad8f6"
+    },
+    "vendor.img": {
+      "source": "stock-firmware/partitions/vendor_a.img",
+      "sha256": "af25da58a5db45deb8549891899b3c0dc67bd9cf43fd74c8dc3231294649368d"
+    },
+    "vendor_dlkm.img": {
+      "source": "stock-firmware/partitions/vendor_dlkm_a.img",
+      "sha256": "fbcc98828367f27cae43f8d335f977c92528b98c4e99565033b1ed71fc19407d"
+    },
+    "system_dlkm.img": {
+      "source": "stock-firmware/partitions/system_dlkm_a.img",
+      "sha256": "53c1cb6a9f1d7b421764bc990585e6f3ded1c85c8dcfdd12a57d710a73aba60c"
+    }
+  },
+  "prebuilt_build_props": {
+    "vendor.build.prop": {
+      "source": "stock-firmware/files/vendor/build.prop",
+      "sha256": "16630c7a55189293f7f6b68828861428b1cd3a1ee2bd560922d0c158db3dfc37"
+    },
+    "vendor_dlkm.build.prop": {
+      "source": "stock-firmware/files/vendor_dlkm/etc/build.prop",
+      "sha256": "22cbd25af6fb8e154aa3e93c6f182a86d20e9e33d39948c92f11602833d62097"
+    },
+    "system_dlkm.build.prop": {
+      "source": "stock-firmware/files/system_dlkm/etc/build.prop",
+      "sha256": "a17d954b0af1c12c8125902577d0e22458f22d78ac940b607f149ae8f407a8c8"
+    }
+  },
+  "prebuilt_vintf_dirs": {
+    "vendor_vintf": {
+      "source": "stock-firmware/files/vendor/etc/vintf",
+      "file_count": 58,
+      "sha256": "5c162f7080c082f85416f8cdcce4b6a90fb4d91e1e4aeb1b9d1775f53993e570"
+    },
+    "odm_vintf": {
+      "source": "stock-firmware/files/vendor/odm/etc/vintf",
+      "file_count": 8,
+      "sha256": "2d3d7d54dea24ccc549f1f0fb74101b059429b5d59461eb7ce6acb272ca84a2f"
+    }
+  },
+  "motorola_sources": [
+    {
+      "url": "https://github.com/MotorolaMobilityLLC/kernel-mtk.git",
+      "tag": "MMI-W1UIS36H.39-25-8",
+      "commit": "0ca1736f92b89c70a2bd72792d131e2d92dffe46"
+    },
+    {
+      "url": "https://github.com/MotorolaMobilityLLC/kernel-kernel_device_modules-6.1.git",
+      "tag": "MMI-W1UIS36H.39-25-8",
+      "commit": "3921b5812fddc16914a621d1b7c2400021d5c2f4"
+    }
+  ],
+  "mediatek_dependencies": [
+    {
+      "url": "https://github.com/LineageOS/android_hardware_mediatek.git",
+      "branch": "lineage-23.2",
+      "commit": "68f9be72a32bca66e7c63d69e9739b18f13c8b48"
+    },
+    {
+      "url": "https://github.com/LineageOS/android_device_mediatek_sepolicy_vndr.git",
+      "branch": "lineage-23.2",
+      "commit": "1b12039600b2ad9b1a435682bc8f61fd1f0b111d"
+    }
+  ]
+}

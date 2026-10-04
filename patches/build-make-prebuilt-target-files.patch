@@ -1,0 +1,94 @@
+diff --git a/core/Makefile b/core/Makefile
+index ca5f422..e71b892 100644
+--- a/core/Makefile
++++ b/core/Makefile
+@@ -6220,6 +6220,11 @@ endif
+ ifdef ODM_MANIFEST_SKUS
+ 	$(hide) echo "vintf_odm_manifest_skus=$(ODM_MANIFEST_SKUS)" >> $@
+ endif
++ifdef BOARD_PREBUILT_ODM_VINTF_SKUS
++ifeq ($(strip $(ODM_MANIFEST_SKUS)),)
++	$(hide) echo "vintf_odm_manifest_skus=$(BOARD_PREBUILT_ODM_VINTF_SKUS)" >> $@
++endif
++endif
+ ifdef ODM_MANIFEST_FILES
+ 	$(hide) echo "vintf_include_empty_odm_sku=true" >> $@
+ endif
+@@ -6492,6 +6497,27 @@ ifdef BUILDING_SYSTEM_OTHER_IMAGE
+   endif
+ endif
+ 
++# A prebuilt init_boot is copied to PREBUILT_IMAGES below. Build its installed
++# image before assembling target files, just like prebuilt vendor_boot.
++ifdef BOARD_PREBUILT_INIT_BOOT_IMAGE
++  $(BUILT_TARGET_FILES_DIR): $(INSTALLED_INIT_BOOT_IMAGE_TARGET)
++endif
++ifdef BOARD_PREBUILT_VENDOR_BUILD_PROP
++  $(BUILT_TARGET_FILES_DIR): $(BOARD_PREBUILT_VENDOR_BUILD_PROP)
++endif
++ifdef BOARD_PREBUILT_VENDOR_DLKM_BUILD_PROP
++  $(BUILT_TARGET_FILES_DIR): $(BOARD_PREBUILT_VENDOR_DLKM_BUILD_PROP)
++endif
++ifdef BOARD_PREBUILT_SYSTEM_DLKM_BUILD_PROP
++  $(BUILT_TARGET_FILES_DIR): $(BOARD_PREBUILT_SYSTEM_DLKM_BUILD_PROP)
++endif
++ifdef BOARD_PREBUILT_VENDOR_VINTF_DIR
++  $(BUILT_TARGET_FILES_DIR): $(BOARD_PREBUILT_VENDOR_VINTF_DIR)
++endif
++ifdef BOARD_PREBUILT_ODM_VINTF_DIR
++  $(BUILT_TARGET_FILES_DIR): $(BOARD_PREBUILT_ODM_VINTF_DIR)
++endif
++
+ ifdef BUILDING_VENDOR_BOOT_IMAGE
+   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_VENDOR_RAMDISK_FILES)
+   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS)
+@@ -6950,6 +6976,30 @@ ifdef BOARD_PREBUILT_VENDOR_BOOTIMAGE
+ 	$(hide) mkdir -p $(zip_root)/IMAGES
+ 	$(hide) cp $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) $(zip_root)/IMAGES/
+ endif
++# Keep exact-stock partition properties available to releasetools even when
++# the corresponding partition contents arrive only as prebuilt images.
++ifdef BOARD_PREBUILT_VENDOR_BUILD_PROP
++	$(hide) mkdir -p $(zip_root)/VENDOR
++	$(hide) cp $(BOARD_PREBUILT_VENDOR_BUILD_PROP) $(zip_root)/VENDOR/build.prop
++endif
++ifdef BOARD_PREBUILT_VENDOR_DLKM_BUILD_PROP
++	$(hide) mkdir -p $(zip_root)/VENDOR_DLKM/etc
++	$(hide) cp $(BOARD_PREBUILT_VENDOR_DLKM_BUILD_PROP) $(zip_root)/VENDOR_DLKM/etc/build.prop
++endif
++ifdef BOARD_PREBUILT_SYSTEM_DLKM_BUILD_PROP
++	$(hide) mkdir -p $(zip_root)/SYSTEM_DLKM/etc
++	$(hide) cp $(BOARD_PREBUILT_SYSTEM_DLKM_BUILD_PROP) $(zip_root)/SYSTEM_DLKM/etc/build.prop
++endif
++# Preserve the exact vendor/ODM VINTF inputs for releasetools. The matching
++# prebuilt vendor image remains the partition payload.
++ifdef BOARD_PREBUILT_VENDOR_VINTF_DIR
++	$(hide) mkdir -p $(zip_root)/VENDOR/etc/vintf
++	$(hide) cp -a $(BOARD_PREBUILT_VENDOR_VINTF_DIR)/. $(zip_root)/VENDOR/etc/vintf/
++endif
++ifdef BOARD_PREBUILT_ODM_VINTF_DIR
++	$(hide) mkdir -p $(zip_root)/VENDOR/odm/etc/vintf
++	$(hide) cp -a $(BOARD_PREBUILT_ODM_VINTF_DIR)/. $(zip_root)/VENDOR/odm/etc/vintf/
++endif
+ ifdef BOARD_PREBUILT_VENDORIMAGE
+ 	$(hide) mkdir -p $(zip_root)/IMAGES
+ 	$(hide) cp $(INSTALLED_VENDORIMAGE_TARGET) $(zip_root)/IMAGES/
+diff --git a/tools/releasetools/common.py b/tools/releasetools/common.py
+index d95e25f..70bc5dc 100644
+--- a/tools/releasetools/common.py
++++ b/tools/releasetools/common.py
+@@ -1105,8 +1105,12 @@ class PartitionBuildProps(object):
+     """
+     data = ''
+     partition_map = PartitionMapFromTargetFiles(input_file)
+-    for prop_file in ['{}/etc/build.prop'.format(partition_map[name]),
+-                      '{}/build.prop'.format(partition_map[name])]:
++    partition_dir = partition_map.get(name)
++    if partition_dir is None:
++      logger.warning('No target-files directory for partition %s', name)
++      return data
++    for prop_file in ['{}/etc/build.prop'.format(partition_dir),
++                      '{}/build.prop'.format(partition_dir)]:
+       try:
+         data = ReadFromInputFile(input_file, prop_file)
+         break

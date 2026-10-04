@@ -1,0 +1,26 @@
+diff --git a/packages/SystemUI/src/com/android/systemui/axdynamicbar/data/source/MediaIslandManager.kt b/packages/SystemUI/src/com/android/systemui/axdynamicbar/data/source/MediaIslandManager.kt
+index 0a8943f47..6d026b30e 100644
+--- a/packages/SystemUI/src/com/android/systemui/axdynamicbar/data/source/MediaIslandManager.kt
++++ b/packages/SystemUI/src/com/android/systemui/axdynamicbar/data/source/MediaIslandManager.kt
+@@ -92,7 +92,7 @@ constructor(
+             _mediaEvent.update { event -> event?.copy(mediaColor = color) }
+         }
+ 
+-        override fun onAlbumArtChanged(drawable: Drawable) {
++        override fun onAlbumArtChanged(drawable: Drawable?) {
+             sessionAlbumArt = drawable
+             _mediaEvent.update { event -> event?.copy(albumArt = drawable) }
+         }
+diff --git a/packages/SystemUI/src/com/android/systemui/media/MediaViewController.kt b/packages/SystemUI/src/com/android/systemui/media/MediaViewController.kt
+index 4590403c7..1a14e4734 100644
+--- a/packages/SystemUI/src/com/android/systemui/media/MediaViewController.kt
++++ b/packages/SystemUI/src/com/android/systemui/media/MediaViewController.kt
+@@ -417,7 +417,7 @@ class MediaViewController @Inject constructor(
+             .start()
+     }
+ 
+-    override fun onAlbumArtChanged(drawable: Drawable) {
++    override fun onAlbumArtChanged(drawable: Drawable?) {
+         coroutineScope.launch {
+             artworkDrawable = drawable
+             onMediaStateChanged()

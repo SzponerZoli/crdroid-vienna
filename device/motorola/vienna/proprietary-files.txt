@@ -1,0 +1,68 @@
+# Candidate system and system_ext cellular blobs from XT2409-1 RETEU W1UIS36H.39-25-8.
+# This is an initial exact-model list, not a complete proprietary extraction.
+# Do not use its output for a phone until framework, signatures, policy and
+# radio behavior have been tested. Vendor and vendor_dlkm remain stock images.
+
+# Required shared library declared by ImsService.apk
+system/etc/permissions/moto-telephony.xml
+system/framework/moto-telephony.jar
+
+# IMS services and resource packages
+system_ext/app/OP12Ims/OP12Ims.apk;PRESIGNED
+system_ext/app/mediatek-res/mediatek-res.apk;PRESIGNED
+system_ext/priv-app/ImsService/ImsService.apk
+system_ext/priv-app/MtkCapCtrl/MtkCapCtrl.apk
+system_ext/priv-app/MtkGbaService/MtkGbaService.apk
+system_ext/priv-app/MtkTelephonyAssist/MtkTelephonyAssist.apk
+system_ext/priv-app/RcsUaService/RcsUaService.apk
+system_ext/priv-app/rcsConfigService/rcsConfigService.apk;PRESIGNED
+
+# IMS and MediaTek framework libraries
+system_ext/framework/CapCtrlInterface.jar
+system_ext/framework/com.mediatek.ims.rcsua.jar
+system_ext/framework/mediatek-carrier-config-manager.jar;BOOT_JAR
+system_ext/framework/mediatek-common.jar;BOOT_JAR
+system_ext/framework/mediatek-framework.jar;BOOT_JAR
+system_ext/framework/mediatek-ims-base.jar;BOOT_JAR
+system_ext/framework/mediatek-ims-oem-plugin.jar
+system_ext/framework/mtk-moto-ims-ext.jar
+system_ext/framework/mtk-moto-telephony-ext.jar
+system_ext/framework/mtk-telephony-common.jar
+
+# IMS configuration and video telephony service
+system_ext/bin/vtservice
+system_ext/etc/init/init.vtservice.rc
+system_ext/etc/permissions/com.mediatek.ims.rcsua.xml
+system_ext/etc/permissions/privapp-permissions-com.motorola.rcsConfigService.xml
+system_ext/etc/permissions/system-ext-permissions-mediatek.xml
+system_ext/etc/sysconfig/com.mediatek.ims.config.xml
+system_ext/etc/sysconfig/whitelist_com.motorola.rcsConfigService.xml
+
+# Stock audio parameter, telephony early-read, and thermal services.
+# The stock audio binary uses core AIDL V3, while the current source audio
+# types module brings in V4. Keep its ELF dependencies out of the Soong graph;
+# device.mk installs the needed libraries separately. Runtime needs testing.
+system_ext/bin/hw/android.hardware.audio.parameter_parser.service;DISABLE_DEPS
+system_ext/etc/init/android.hardware.audio.parameter_parser.service.rc
+system_ext/bin/terservice
+system_ext/etc/init/terserver.rc
+system_ext/lib64/libterservice.so
+system_ext/bin/thermald
+system_ext/etc/init/init.thermald.rc
+
+# IMS native libraries observed in the exact stock system_ext image
+system_ext/lib64/libcomutils.so
+system_ext/lib64/libimsma.so
+system_ext/lib64/libimsma_adapt.so
+system_ext/lib64/libimsma_rtp.so
+system_ext/lib64/libimsma_socketwrapper.so
+system_ext/lib64/libmtk_vt_service.so
+system_ext/lib64/libmtk_vt_wrapper.so
+system_ext/lib64/libsignal.so
+system_ext/lib64/libsink.so:system_ext/lib64/libsink-mtk.so;FIX_SONAME
+system_ext/lib64/libsource.so
+system_ext/lib64/libvcodec_cap.so
+system_ext/lib64/libvcodec_capenc.so
+system_ext/lib64/libvt_avsync.so
+system_ext/lib64/vendor.mediatek.hardware.videotelephony-V1-ndk.so
+system_ext/lib64/vendor.mediatek.hardware.videotelephony@1.0.so

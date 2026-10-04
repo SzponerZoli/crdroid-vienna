@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Research sources for Motorola Edge 50 Neo XT2409-1 RETEU,
+  stock build W1UIS36H.39-25-8. Place in .repo/local_manifests/
+  after initializing crDroid's 16.0 manifest. These projects are
+  pinned source inputs, not a complete device-tree build recipe.
+-->
+<manifest>
+  <remote name="motorola" fetch="https://github.com/MotorolaMobilityLLC" />
+  <remote name="lineage-mtk" fetch="https://github.com/LineageOS" />
+  <project name="kernel-mtk"
+           path="kernel/motorola/mt6878"
+           remote="motorola"
+           revision="0ca1736f92b89c70a2bd72792d131e2d92dffe46" />
+  <project name="kernel-kernel_device_modules-6.1"
+           path="kernel/motorola/mt6878-modules"
+           remote="motorola"
+           revision="3921b5812fddc16914a621d1b7c2400021d5c2f4" />
+  <project name="android_hardware_mediatek"
+           path="hardware/mediatek"
+           remote="lineage-mtk"
+           revision="68f9be72a32bca66e7c63d69e9739b18f13c8b48" />
+  <project name="android_device_mediatek_sepolicy_vndr"
+           path="device/mediatek/sepolicy_vndr"
+           remote="lineage-mtk"
+           revision="1b12039600b2ad9b1a435682bc8f61fd1f0b111d" />
+</manifest>

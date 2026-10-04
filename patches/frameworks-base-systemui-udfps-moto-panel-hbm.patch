@@ -1,0 +1,349 @@
+diff --git a/packages/SystemUI/res/values/lineage_config.xml b/packages/SystemUI/res/values/lineage_config.xml
+index ccb178f5d..e1238cdbf 100644
+--- a/packages/SystemUI/res/values/lineage_config.xml
++++ b/packages/SystemUI/res/values/lineage_config.xml
+@@ -18,6 +18,23 @@
+     <!-- Color of the UDFPS pressed view -->
+     <color name="config_udfpsColor">#ffffffff</color>
+ 
++    <!-- Whether to raise the display to full brightness while an optical UDFPS
++         is being illuminated, for panels without kernel-driven HBM -->
++    <bool name="config_udfpsBoostBrightness">false</bool>
++
++    <!-- Whether to illuminate an optical UDFPS through the Motorola display panel HAL
++         (HIGH_BRIGHT_FOD mode) with a dim layer around the sensor -->
++    <bool name="config_udfpsMotoPanelHbm">false</bool>
++
++    <!-- Approximate panel luminance in HIGH_BRIGHT_FOD mode, used to size the dim layer -->
++    <integer name="config_udfpsMotoPanelHbmNits">1600</integer>
++
++    <!-- Display brightness (0-1) to nits mapping as "<brightness>,<nits>", ascending -->
++    <string-array name="config_udfpsMotoPanelBrightnessNits" translatable="false" />
++
++    <!-- Delay before reporting the UDFPS UI as ready after boosting brightness -->
++    <integer name="config_udfpsBoostBrightnessDelayMs">80</integer>
++
+     <!-- Whether to enable framework dimming for UDFPS -->
+     <bool name="config_udfpsFrameworkDimming">false</bool>
+ 
+diff --git a/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsDisplayMode.kt b/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsDisplayMode.kt
+index 670a8e638..2db357a95 100644
+--- a/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsDisplayMode.kt
++++ b/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsDisplayMode.kt
+@@ -17,6 +17,10 @@
+ package com.android.systemui.biometrics
+ 
+ import android.content.Context
++import android.hardware.display.DisplayManager
++import android.os.Handler
++import android.os.Looper
++import android.os.PowerManager
+ import android.os.RemoteException
+ import android.os.Trace
+ import com.android.systemui.util.concurrency.Execution
+@@ -38,6 +42,23 @@ constructor(
+     // The request is reset to null after it's processed.
+     private var currentRequest: Request? = null
+ 
++    // Optical sensors whose panel has no kernel-driven HBM need the whole display at full
++    // brightness while the finger is down, otherwise the captured image is too dark.
++    private val boostBrightness = context.resources.getBoolean(
++        com.android.systemui.res.R.bool.config_udfpsBoostBrightness
++    )
++    private val boostDelayMs = context.resources.getInteger(
++        com.android.systemui.res.R.integer.config_udfpsBoostBrightnessDelayMs
++    ).toLong()
++    private val displayManager = context.getSystemService(DisplayManager::class.java)
++    private val handler = Handler(Looper.getMainLooper())
++    private val motoPanelHbm =
++        if (context.resources.getBoolean(com.android.systemui.res.R.bool.config_udfpsMotoPanelHbm)) {
++            UdfpsMotoPanelHbm(context, authController)
++        } else {
++            null
++        }
++
+     override fun enable(onEnabled: Runnable?) {
+         execution.isMainThread()
+         logger.v(TAG, "enable")
+@@ -66,7 +87,24 @@ constructor(
+             logger.e(TAG, "enable", e)
+         }
+ 
+-        onEnabled?.run() ?: logger.w(TAG, "enable | onEnabled is null")
++        if (motoPanelHbm != null) {
++            motoPanelHbm.enable {
++                if (currentRequest === request) {
++                    onEnabled?.run() ?: logger.w(TAG, "enable | onEnabled is null")
++                }
++            }
++        } else if (boostBrightness && displayManager != null) {
++            displayManager.setTemporaryBrightness(request.displayId, PowerManager.BRIGHTNESS_MAX)
++            logger.v(TAG, "enable | boosted brightness")
++            // Let the panel reach full brightness before the HAL captures the image.
++            handler.postDelayed({
++                if (currentRequest === request) {
++                    onEnabled?.run() ?: logger.w(TAG, "enable | onEnabled is null")
++                }
++            }, boostDelayMs)
++        } else {
++            onEnabled?.run() ?: logger.w(TAG, "enable | onEnabled is null")
++        }
+         Trace.endSection()
+     }
+ 
+@@ -90,6 +128,15 @@ constructor(
+             logger.e(TAG, "disable", e)
+         }
+ 
++        if (motoPanelHbm != null) {
++            motoPanelHbm.disable()
++        } else if (boostBrightness && displayManager != null) {
++            displayManager.setTemporaryBrightness(
++                request.displayId, PowerManager.BRIGHTNESS_INVALID_FLOAT
++            )
++            logger.v(TAG, "disable | restored brightness")
++        }
++
+         currentRequest = null
+         onDisabled?.run() ?: logger.w(TAG, "disable | onDisabled is null")
+         Trace.endSection()
+diff --git a/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsMotoPanelHbm.kt b/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsMotoPanelHbm.kt
+new file mode 100644
+index 000000000..1f1137c59
+--- /dev/null
++++ b/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsMotoPanelHbm.kt
+@@ -0,0 +1,234 @@
++/*
++ * Copyright (C) 2026 The LineageOS Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package com.android.systemui.biometrics
++
++import android.content.Context
++import android.graphics.Canvas
++import android.graphics.Color
++import android.graphics.Paint
++import android.graphics.Path
++import android.graphics.PixelFormat
++import android.graphics.Point
++import android.hardware.display.DisplayManager
++import android.os.Handler
++import android.os.IBinder
++import android.os.Looper
++import android.os.Parcel
++import android.os.ServiceManager
++import android.util.Log
++import android.view.Display
++import android.view.Gravity
++import android.view.View
++import android.view.WindowManager
++import kotlin.math.pow
++
++private const val TAG = "UdfpsMotoPanelHbm"
++
++private const val PANEL_SERVICE = "com.motorola.hardware.display.panel.IDisplayPanel/default"
++private const val PANEL_DESCRIPTOR = "com.motorola.hardware.display.panel.IDisplayPanel"
++private const val TRANSACTION_SET_MODE = IBinder.FIRST_CALL_TRANSACTION + 4
++private const val PANEL_MODE_NORMAL = 0
++private const val PANEL_MODE_HIGH_BRIGHT_FOD = 4
++
++// Time for the dim layer to reach the screen before HBM, and for HBM to end before it goes.
++private const val DIM_SETTLE_MS = 20L
++
++/**
++ * Local UDFPS illumination for Motorola panels: switches the panel into its HIGH_BRIGHT_FOD mode
++ * through the Moto display panel HAL and covers everything except the sensor with a dim layer, so
++ * only the sensor area gets brighter.
++ */
++class UdfpsMotoPanelHbm(
++    private val context: Context,
++    private val authController: AuthController,
++) {
++    private val res = context.resources
++    private val windowManager = context.getSystemService(WindowManager::class.java)!!
++    private val displayManager = context.getSystemService(DisplayManager::class.java)!!
++    private val handler = Handler(Looper.getMainLooper())
++    private val readyDelayMs =
++        res.getInteger(com.android.systemui.res.R.integer.config_udfpsBoostBrightnessDelayMs)
++            .toLong()
++    private val hbmNits =
++        res.getInteger(com.android.systemui.res.R.integer.config_udfpsMotoPanelHbmNits).toFloat()
++    private val brightnessToNits: List<Pair<Float, Float>> =
++        res.getStringArray(com.android.systemui.res.R.array.config_udfpsMotoPanelBrightnessNits)
++            .map {
++                val (brightness, nits) = it.split(",").map { value -> value.trim().toFloat() }
++                brightness to nits
++            }
++            .sortedBy { it.first }
++
++    private val dimView = DimView(context)
++    private var dimShown = false
++    // Bumped on every enable/disable so a stale frame-commit callback can't turn HBM on.
++    private var generation = 0
++    private val pending = mutableListOf<Runnable>()
++
++    private val dimLayoutParams =
++        WindowManager.LayoutParams(
++                WindowManager.LayoutParams.TYPE_NAVIGATION_BAR_PANEL,
++                0,
++                PixelFormat.TRANSLUCENT,
++            )
++            .apply {
++                title = "UDFPS HBM dim layer"
++                fitInsetsTypes = 0
++                gravity = Gravity.TOP or Gravity.LEFT
++                layoutInDisplayCutoutMode =
++                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
++                flags =
++                    Utils.FINGERPRINT_OVERLAY_LAYOUT_PARAM_FLAGS or
++                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
++                privateFlags =
++                    WindowManager.LayoutParams.PRIVATE_FLAG_TRUSTED_OVERLAY or
++                        WindowManager.LayoutParams.PRIVATE_FLAG_IS_ROUNDED_CORNERS_OVERLAY
++                accessibilityTitle = " "
++            }
++
++    /** Dims the screen around the sensor, enables panel HBM, then runs [onReady]. */
++    fun enable(onReady: Runnable) {
++        cancelPending()
++        val token = ++generation
++        val location = authController.udfpsLocation
++        val radius = authController.udfpsRadius
++        if (location == null || radius <= 0f) {
++            Log.e(TAG, "enable | no UDFPS location, skipping HBM")
++            onReady.run()
++            return
++        }
++
++        dimView.update(location, radius, dimAlpha())
++        if (!dimShown) {
++            windowManager.addView(dimView, dimLayoutParams)
++            dimShown = true
++        }
++
++        // Turn on HBM only once the dim layer is on screen, so the rest of the display
++        // never flashes bright.
++        dimView.viewTreeObserver.registerFrameCommitCallback {
++            if (token != generation) return@registerFrameCommitCallback
++            schedule(DIM_SETTLE_MS) {
++                if (!setPanelMode(PANEL_MODE_HIGH_BRIGHT_FOD)) {
++                    removeDimLayer()
++                }
++                schedule(readyDelayMs) { onReady.run() }
++            }
++        }
++        dimView.invalidate()
++    }
++
++    /** Leaves panel HBM and removes the dim layer once the panel is back to normal. */
++    fun disable() {
++        cancelPending()
++        generation++
++        setPanelMode(PANEL_MODE_NORMAL)
++        schedule(DIM_SETTLE_MS) { removeDimLayer() }
++    }
++
++    private fun removeDimLayer() {
++        if (dimShown) {
++            windowManager.removeView(dimView)
++            dimShown = false
++        }
++    }
++
++    private fun schedule(delayMs: Long, action: () -> Unit) {
++        val runnable = object : Runnable {
++            override fun run() {
++                pending.remove(this)
++                action()
++            }
++        }
++        pending.add(runnable)
++        handler.postDelayed(runnable, delayMs)
++    }
++
++    private fun cancelPending() {
++        pending.forEach { handler.removeCallbacks(it) }
++        pending.clear()
++    }
++
++    /** Alpha of a black layer that makes HBM look like the current brightness. */
++    private fun dimAlpha(): Float {
++        val brightness =
++            displayManager.getDisplay(Display.DEFAULT_DISPLAY)?.brightnessInfo?.brightness
++                ?: return 0f
++        val currentNits = brightnessToNits(brightness)
++        if (currentNits <= 0f || hbmNits <= 0f || currentNits >= hbmNits) {
++            return 0f
++        }
++        // Black blending happens on gamma-encoded values, luminance follows ~2.2 gamma.
++        return (1f - (currentNits / hbmNits).pow(1f / 2.2f)).coerceIn(0f, 1f)
++    }
++
++    private fun brightnessToNits(brightness: Float): Float {
++        if (brightnessToNits.isEmpty()) return 0f
++        val upper = brightnessToNits.indexOfFirst { it.first >= brightness }
++        if (upper <= 0) {
++            return if (upper == 0) brightnessToNits[0].second else brightnessToNits.last().second
++        }
++        val (b0, n0) = brightnessToNits[upper - 1]
++        val (b1, n1) = brightnessToNits[upper]
++        return n0 + (brightness - b0) * (n1 - n0) / (b1 - b0)
++    }
++
++    private fun setPanelMode(mode: Int): Boolean {
++        val binder = ServiceManager.checkService(PANEL_SERVICE)
++        if (binder == null) {
++            Log.e(TAG, "setPanelMode | $PANEL_SERVICE not found")
++            return false
++        }
++        val data = Parcel.obtain()
++        val reply = Parcel.obtain()
++        return try {
++            data.writeInterfaceToken(PANEL_DESCRIPTOR)
++            data.writeInt(mode)
++            binder.transact(TRANSACTION_SET_MODE, data, reply, 0)
++            reply.readException()
++            val ret = reply.readInt()
++            if (ret != 0) Log.e(TAG, "setPanelMode | mode $mode returned $ret")
++            ret == 0
++        } catch (e: Exception) {
++            Log.e(TAG, "setPanelMode | mode $mode failed", e)
++            false
++        } finally {
++            data.recycle()
++            reply.recycle()
++        }
++    }
++
++    private class DimView(context: Context) : View(context) {
++        private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.BLACK }
++        private val path = Path().apply { fillType = Path.FillType.EVEN_ODD }
++        private var center = Point()
++        private var radius = 0f
++
++        fun update(center: Point, radius: Float, alpha: Float) {
++            this.center = center
++            this.radius = radius
++            paint.alpha = (alpha * 255).toInt()
++        }
++
++        override fun onDraw(canvas: Canvas) {
++            path.reset()
++            path.addRect(0f, 0f, width.toFloat(), height.toFloat(), Path.Direction.CW)
++            path.addCircle(center.x.toFloat(), center.y.toFloat(), radius, Path.Direction.CW)
++            canvas.drawPath(path, paint)
++        }
++    }
++}

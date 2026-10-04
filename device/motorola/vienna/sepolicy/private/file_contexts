@@ -1,0 +1,4 @@
+# The generic MediaTek policy labels these services under /system/bin, while
+# the exact-model stock image installs them in system_ext.
+/(system_ext|system/system_ext)/bin/terservice u:object_r:terservice_exec:s0
+/(system_ext|system/system_ext)/bin/thermald u:object_r:thermald_exec:s0

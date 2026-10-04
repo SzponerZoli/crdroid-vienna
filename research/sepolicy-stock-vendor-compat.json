@@ -1,0 +1,32 @@
+{
+  "purpose": "Host diagnostic mirroring init's split-policy secilc inputs for stock vendor version",
+  "stock_vendor_version": "34.0",
+  "stock_genfs_labels_version": "202404",
+  "inputs": [
+    "crdroid/out/soong/.intermediates/system/sepolicy/plat_sepolicy.cil/android_common/plat_sepolicy.cil",
+    "crdroid/out/target/product/vienna/system/etc/selinux/mapping/34.0.cil",
+    "crdroid/system/sepolicy/private/compat/34.0/34.0.compat.cil",
+    "crdroid/out/soong/.intermediates/system/sepolicy/system_ext_sepolicy.cil/android_common/vienna/system_ext_sepolicy.cil",
+    "crdroid/out/target/product/vienna/system_ext/etc/selinux/mapping/34.0.cil",
+    "crdroid/out/soong/.intermediates/system/sepolicy/product_sepolicy.cil/android_common/vienna/product_sepolicy.cil",
+    "crdroid/out/target/product/vienna/product/etc/selinux/mapping/34.0.cil",
+    "stock-firmware/files/vendor/etc/selinux/plat_pub_versioned.cil",
+    "stock-firmware/files/vendor/etc/selinux/vendor_sepolicy.cil"
+  ],
+  "missing_inputs": [],
+  "input_sha256": {
+    "crdroid/out/soong/.intermediates/system/sepolicy/plat_sepolicy.cil/android_common/plat_sepolicy.cil": "9cd75f41d9f0779385ed31896ce6c50b28c0c649e04c4f2efb505b1cba4c838b",
+    "crdroid/out/target/product/vienna/system/etc/selinux/mapping/34.0.cil": "da068c35785bfc43c6bd750ea16a903ae4c3634261db05095f1d5669193527db",
+    "crdroid/system/sepolicy/private/compat/34.0/34.0.compat.cil": "96535de6961473ec5191e879e8547820dff5011fb5e0409c3df75b6dc0395834",
+    "crdroid/out/soong/.intermediates/system/sepolicy/system_ext_sepolicy.cil/android_common/vienna/system_ext_sepolicy.cil": "47d4d1fcd62869483e8ddf05a4e49de7e7eec4469b16d2ff507b6e7c833cbc68",
+    "crdroid/out/target/product/vienna/system_ext/etc/selinux/mapping/34.0.cil": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "crdroid/out/soong/.intermediates/system/sepolicy/product_sepolicy.cil/android_common/vienna/product_sepolicy.cil": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "crdroid/out/target/product/vienna/product/etc/selinux/mapping/34.0.cil": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stock-firmware/files/vendor/etc/selinux/plat_pub_versioned.cil": "5a4bd9325cef9034cd845537aa7a69904ddf63167d66757264fe8ca636e59b7a",
+    "stock-firmware/files/vendor/etc/selinux/vendor_sepolicy.cil": "c81fa5fc82e0457a39da09542670970783c0678cc250ba82a876f4f3c3ba9725"
+  },
+  "exit_code": 0,
+  "result": "compiled",
+  "stdout": "",
+  "stderr": ""
+}

@@ -1,0 +1,403 @@
+{
+  "method": "Stock init service and VINTF fragment inventory; extraction coverage only",
+  "services": [
+    {
+      "service": "audio_parameter_parser_service",
+      "executable": "system_ext/bin/hw/android.hardware.audio.parameter_parser.service",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "android.hardware.audio.core-V3-ndk.so",
+        "av-audio-types-aidl-ndk.so",
+        "libbase.so",
+        "libbinder_ndk.so",
+        "libc++.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmedia_helper.so",
+        "libmediautils.so",
+        "libutils.so"
+      ],
+      "executable_in_proprietary_list": true,
+      "init_file": "system_ext/etc/init/android.hardware.audio.parameter_parser.service.rc",
+      "init_file_in_proprietary_list": true,
+      "line": 1
+    },
+    {
+      "service": "connsyslogger",
+      "executable": "system_ext/bin/connsyslogger",
+      "stock_executable_exists": false,
+      "needed_libraries": [],
+      "executable_in_proprietary_list": false,
+      "init_file": "system_ext/etc/init/hw/meta_init.system.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 392
+    },
+    {
+      "service": "emdlogger",
+      "executable": "system_ext/bin/emdlogger",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "libc++.so",
+        "libc.so",
+        "libccci_util_sys.so",
+        "libcutils.so",
+        "libdl.so",
+        "liblog.so",
+        "libm.so",
+        "libmdloggerrecycle.so",
+        "libselinux.so"
+      ],
+      "executable_in_proprietary_list": false,
+      "init_file": "system_ext/etc/init/emdlogger.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 6
+    },
+    {
+      "service": "emdlogger1",
+      "executable": "system_ext/bin/emdlogger1",
+      "stock_executable_exists": false,
+      "needed_libraries": [],
+      "executable_in_proprietary_list": false,
+      "init_file": "system_ext/etc/init/hw/meta_init.system.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 387
+    },
+    {
+      "service": "emdlogger1",
+      "executable": "system_ext/bin/emdlogger1",
+      "stock_executable_exists": false,
+      "needed_libraries": [],
+      "executable_in_proprietary_list": false,
+      "init_file": "vendor/etc/init/hw/factory_init.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 752
+    },
+    {
+      "service": "hidl_memory",
+      "executable": "system_ext/bin/hw/android.hidl.allocator@1.0-service",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "android.hidl.allocator@1.0.so",
+        "libbase.so",
+        "libc++.so",
+        "libc.so",
+        "libcutils.so",
+        "libdl.so",
+        "libhidlbase.so",
+        "liblog.so",
+        "libm.so",
+        "libutils.so"
+      ],
+      "executable_in_proprietary_list": false,
+      "init_file": "system_ext/etc/init/android.hidl.allocator@1.0-service.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 1
+    },
+    {
+      "service": "hwservicemanager",
+      "executable": "system_ext/bin/hwservicemanager",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "android.hidl.token@1.0.so",
+        "libbase.so",
+        "libc++.so",
+        "libc.so",
+        "libcrypto.so",
+        "libcutils.so",
+        "libdl.so",
+        "libhidl-gen-utils.so",
+        "libhidlbase.so",
+        "liblog.so",
+        "libm.so",
+        "libselinux.so",
+        "libutils.so",
+        "libvintf.so"
+      ],
+      "executable_in_proprietary_list": false,
+      "init_file": "system_ext/etc/init/hwservicemanager.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 1
+    },
+    {
+      "service": "lbs_dbg_ext",
+      "executable": "system_ext/bin/lbs_dbg_ext",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "libbase.so",
+        "libbinder.so",
+        "libbinder_ndk.so",
+        "libc++.so",
+        "libc.so",
+        "libcutils.so",
+        "libdl.so",
+        "libhardware.so",
+        "libhidlbase.so",
+        "libhidltransport.so",
+        "liblog.so",
+        "libm.so",
+        "libutils.so",
+        "libz.so",
+        "vendor.mediatek.hardware.lbs@1.0.so"
+      ],
+      "executable_in_proprietary_list": false,
+      "init_file": "system_ext/etc/init/init.lbs_dbg.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 2
+    },
+    {
+      "service": "loghidlsysservice",
+      "executable": "system_ext/bin/loghidlsysservice",
+      "stock_executable_exists": false,
+      "needed_libraries": [],
+      "executable_in_proprietary_list": false,
+      "init_file": "system_ext/etc/init/hw/meta_init.system.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 398
+    },
+    {
+      "service": "magt",
+      "executable": "system_ext/bin/magt",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "android.hardware.health@2.0.so",
+        "android.hardware.thermal@2.0.so",
+        "libbase.so",
+        "libbinder.so",
+        "libc++.so",
+        "libc.so",
+        "libcutils.so",
+        "libdl.so",
+        "libexpat.so",
+        "liblog.so",
+        "libm.so",
+        "libmagt.so",
+        "libutils.so"
+      ],
+      "executable_in_proprietary_list": false,
+      "init_file": "system_ext/etc/init/magt.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 2
+    },
+    {
+      "service": "mdlogger",
+      "executable": "system_ext/bin/mdlogger",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "libc++.so",
+        "libc.so",
+        "libcutils.so",
+        "libdl.so",
+        "liblog.so",
+        "libm.so",
+        "libmdloggerrecycle.so",
+        "libmemoryDumpEncoder.so"
+      ],
+      "executable_in_proprietary_list": false,
+      "init_file": "system_ext/etc/init/mdlogger.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 5
+    },
+    {
+      "service": "media",
+      "executable": "system_ext/bin/mediahelper",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "libc++.so",
+        "libc.so",
+        "libcutils.so",
+        "libdl.so",
+        "liblog.so",
+        "libm.so"
+      ],
+      "executable_in_proprietary_list": false,
+      "init_file": "system_ext/etc/init/mediaserver_dynamic.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 4
+    },
+    {
+      "service": "mot.tcmd-aidl",
+      "executable": "system_ext/bin/hw/motorola.hardware.tcmdaidl-service",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "libandroidicu.so",
+        "libbase.so",
+        "libbinder.so",
+        "libbinder_ndk.so",
+        "libc++.so",
+        "libc.so",
+        "libcrypto.so",
+        "libcutils.so",
+        "libdl.so",
+        "liblog.so",
+        "libm.so",
+        "libutils.so",
+        "motorola.hardware.tcmdaidl-V2-ndk.so"
+      ],
+      "executable_in_proprietary_list": false,
+      "init_file": "system_ext/etc/init/motorola.hardware.tcmdaidl-service.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 2
+    },
+    {
+      "service": "mot.tcmd-hal-1-0",
+      "executable": "system_ext/bin/hw/motorola.hardware.tcmd@1.0-service",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "libbase.so",
+        "libc++.so",
+        "libc.so",
+        "libcutils.so",
+        "libdl.so",
+        "libhidlbase.so",
+        "libhidltcmd.so",
+        "libhidltransport.so",
+        "liblog.so",
+        "libm.so",
+        "libutils.so",
+        "motorola.hardware.tcmd@1.0.so"
+      ],
+      "executable_in_proprietary_list": false,
+      "init_file": "system_ext/etc/init/motorola.hardware.tcmd@1.0-service.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 2
+    },
+    {
+      "service": "mtk.plpath.utils.link",
+      "executable": "system_ext/bin/mtk_plpath_utils",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "libbase.so",
+        "libc++.so",
+        "libc.so",
+        "libdl.so",
+        "liblog.so",
+        "libm.so"
+      ],
+      "executable_in_proprietary_list": false,
+      "init_file": "system_ext/etc/init/mtk-plpath-utils.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 57
+    },
+    {
+      "service": "tcmd_system",
+      "executable": "system_ext/bin/tcmd_system",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "libandroidicu.so",
+        "libbinder.so",
+        "libc++.so",
+        "libc.so",
+        "libcrypto.so",
+        "libcutils.so",
+        "libdl.so",
+        "liblog.so",
+        "libm.so",
+        "libutils.so"
+      ],
+      "executable_in_proprietary_list": false,
+      "init_file": "vendor/etc/init/hw/init.mmi.tcmd.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 19
+    },
+    {
+      "service": "terservice",
+      "executable": "system_ext/bin/terservice",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "libbinder.so",
+        "libc++.so",
+        "libc.so",
+        "libcutils.so",
+        "libdl.so",
+        "liblog.so",
+        "libm.so",
+        "libterservice.so",
+        "libutils.so"
+      ],
+      "executable_in_proprietary_list": true,
+      "init_file": "system_ext/etc/init/terserver.rc",
+      "init_file_in_proprietary_list": true,
+      "line": 4
+    },
+    {
+      "service": "thermald",
+      "executable": "system_ext/bin/thermald",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "libbinder.so",
+        "libc++.so",
+        "libc.so",
+        "libcutils.so",
+        "libdl.so",
+        "liblog.so",
+        "libm.so",
+        "libutils.so"
+      ],
+      "executable_in_proprietary_list": true,
+      "init_file": "system_ext/etc/init/init.thermald.rc",
+      "init_file_in_proprietary_list": true,
+      "line": 1
+    },
+    {
+      "service": "usp_service",
+      "executable": "system_ext/bin/usp_service",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "libc++.so",
+        "libc.so",
+        "libcutils.so",
+        "libdl.so",
+        "liblog.so",
+        "libm.so"
+      ],
+      "executable_in_proprietary_list": false,
+      "init_file": "system_ext/etc/init/usp_service.rc",
+      "init_file_in_proprietary_list": false,
+      "line": 3
+    },
+    {
+      "service": "vtservice",
+      "executable": "system_ext/bin/vtservice",
+      "stock_executable_exists": true,
+      "needed_libraries": [
+        "libbinder.so",
+        "libc++.so",
+        "libc.so",
+        "libcutils.so",
+        "libdl.so",
+        "liblog.so",
+        "libm.so",
+        "libmtk_vt_service.so",
+        "libutils.so"
+      ],
+      "executable_in_proprietary_list": true,
+      "init_file": "system_ext/etc/init/init.vtservice.rc",
+      "init_file_in_proprietary_list": true,
+      "line": 3
+    }
+  ],
+  "system_ext_vintf_fragments": [
+    {
+      "file": "system_ext/etc/vintf/manifest/android.hidl.allocator@1.0-service.xml",
+      "hal_names": [
+        "android.hidl.allocator"
+      ],
+      "in_proprietary_list": false
+    },
+    {
+      "file": "system_ext/etc/vintf/manifest/motorola.hardware.tcmd@1.0-service.xml",
+      "hal_names": [
+        "motorola.hardware.tcmd"
+      ],
+      "in_proprietary_list": false
+    },
+    {
+      "file": "system_ext/etc/vintf/manifest/motorola.hardware.tcmdaidl-service.xml",
+      "hal_names": [
+        "motorola.hardware.tcmdaidl"
+      ],
+      "in_proprietary_list": false
+    }
+  ]
+}

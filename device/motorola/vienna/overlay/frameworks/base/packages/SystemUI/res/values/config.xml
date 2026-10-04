@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The Egis optical UDFPS needs a bright spot to capture a usable image.
+         Stock enables the panel's HIGH_BRIGHT_FOD mode through the Moto panel
+         HAL and dims the rest of the screen. -->
+    <bool name="config_udfpsMotoPanelHbm">true</bool>
+
+    <!-- Brightness to nits, from the display device config (dumpsys display) -->
+    <string-array name="config_udfpsMotoPanelBrightnessNits" translatable="false">
+        <item>0.0,3.1</item>
+        <item>0.0673,7</item>
+        <item>0.0999,10</item>
+        <item>0.1732,24</item>
+        <item>0.3076,64</item>
+        <item>0.3524,82</item>
+        <item>0.3687,90</item>
+        <item>0.3972,105</item>
+        <item>0.5357,192</item>
+        <item>0.7801,412</item>
+        <item>0.8574,500</item>
+        <item>0.8860,700</item>
+        <item>0.9226,1000</item>
+        <item>0.9511,1200</item>
+        <item>1.0,1600</item>
+    </string-array>
+</resources>

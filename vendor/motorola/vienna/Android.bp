@@ -1,0 +1,837 @@
+//
+// Automatically generated file. DO NOT MODIFY
+//
+
+soong_namespace {
+}
+
+cc_prebuilt_library_shared {
+    name: "libcomutils",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libcomutils.so",
+            ],
+            shared_libs: [
+                "libcutils",
+                "libstagefright_foundation",
+                "libutils",
+                "libstagefright",
+                "libmedia",
+                "liblog",
+                "libhidlbase",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libimsma",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libimsma.so",
+            ],
+            shared_libs: [
+                "libbinder",
+                "libcutils",
+                "libgui",
+                "libmedia",
+                "libstagefright",
+                "libstagefright_foundation",
+                "libui",
+                "libutils",
+                "libsink-mtk",
+                "libsource",
+                "libvcodec_cap",
+                "libimsma_rtp",
+                "libcomutils",
+                "liblog",
+                "libsignal",
+                "libnetd_client",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libimsma_adapt",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libimsma_adapt.so",
+            ],
+            shared_libs: [
+                "liblog",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libimsma_rtp",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libimsma_rtp.so",
+            ],
+            shared_libs: [
+                "libbinder",
+                "libmedia",
+                "libutils",
+                "libcutils",
+                "libstagefright",
+                "libstagefright_foundation",
+                "libimsma_socketwrapper",
+                "libvcodec_cap",
+                "libimsma_adapt",
+                "liblog",
+                "libsignal",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libimsma_socketwrapper",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libimsma_socketwrapper.so",
+            ],
+            shared_libs: [
+                "libbinder",
+                "libmedia",
+                "libutils",
+                "libcutils",
+                "libstagefright",
+                "libstagefright_foundation",
+                "libnetd_client",
+                "liblog",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libmtk_vt_service",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libmtk_vt_service.so",
+            ],
+            shared_libs: [
+                "libandroid_runtime",
+                "libbinder",
+                "libutils",
+                "libcutils",
+                "libnativehelper",
+                "libui",
+                "libgui",
+                "libmedia",
+                "libbase",
+                "libfmq",
+                "libbinder_ndk",
+                "vendor.mediatek.hardware.videotelephony@1.0",
+                "vendor.mediatek.hardware.videotelephony-V1-ndk",
+                "libhidlbase",
+                "libhidltransport",
+                "libimsma",
+                "libsource",
+                "libimsma_rtp",
+                "libvt_avsync",
+                "libstagefright_foundation",
+                "libvcodec_cap",
+                "liblog",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libmtk_vt_wrapper",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libmtk_vt_wrapper.so",
+            ],
+            shared_libs: [
+                "libandroid_runtime",
+                "libbinder",
+                "libutils",
+                "libcutils",
+                "libnativehelper",
+                "libfmq",
+                "libbinder_ndk",
+                "vendor.mediatek.hardware.videotelephony@1.0",
+                "vendor.mediatek.hardware.videotelephony-V1-ndk",
+                "libhidlbase",
+                "libhidltransport",
+                "libui",
+                "libgui",
+                "libmedia",
+                "libvcodec_cap",
+                "liblog",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libsignal",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libsignal.so",
+            ],
+            shared_libs: [
+                "libcutils",
+                "libutils",
+                "libstagefright_foundation",
+                "liblog",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libsink-mtk",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libsink-mtk.so",
+            ],
+            shared_libs: [
+                "libbinder",
+                "libcutils",
+                "libgui",
+                "libmedia",
+                "libstagefright",
+                "libstagefright_foundation",
+                "libui",
+                "libutils",
+                "libcomutils",
+                "libvcodec_cap",
+                "libvt_avsync",
+                "liblog",
+                "libmedia_omx",
+                "libaudioclient",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libsource",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libsource.so",
+            ],
+            shared_libs: [
+                "libbinder",
+                "libcutils",
+                "libgui",
+                "libmedia",
+                "libstagefright",
+                "libstagefright_foundation",
+                "libmedia_omx",
+                "libui",
+                "libutils",
+                "libcamera_client",
+                "libcomutils",
+                "libvcodec_cap",
+                "liblog",
+                "libsignal",
+                "libhardware",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libterservice",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libterservice.so",
+            ],
+            shared_libs: [
+                "libutils",
+                "libbinder",
+                "libcutils",
+                "liblog",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libvcodec_cap",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libvcodec_cap.so",
+            ],
+            shared_libs: [
+                "libui",
+                "libcutils",
+                "libutils",
+                "libbinder",
+                "libexpat",
+                "liblog",
+                "libvcodec_capenc",
+                "libstagefright_omx_utils",
+                "libstagefright_foundation",
+                "libion",
+                "android.hardware.graphics.bufferqueue@2.0",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libvcodec_capenc",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libvcodec_capenc.so",
+            ],
+            shared_libs: [
+                "liblog",
+                "libion",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libvt_avsync",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libvt_avsync.so",
+            ],
+            shared_libs: [
+                "libbinder",
+                "libutils",
+                "libcutils",
+                "liblog",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "vendor.mediatek.hardware.videotelephony-V1-ndk",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/vendor.mediatek.hardware.videotelephony-V1-ndk.so",
+            ],
+            shared_libs: [
+                "libbinder_ndk",
+                "android.hardware.common-V2-ndk",
+                "android.hardware.common.fmq-V1-ndk",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "vendor.mediatek.hardware.videotelephony@1.0",
+    owner: "motorola",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/vendor.mediatek.hardware.videotelephony@1.0.so",
+            ],
+            shared_libs: [
+                "libhidlbase",
+                "liblog",
+                "libutils",
+                "libcutils",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+android_app_import {
+    name: "OP12Ims",
+    owner: "motorola",
+    apk: "proprietary/system_ext/app/OP12Ims/OP12Ims.apk",
+    preprocessed: true,
+    presigned: true,
+    dex_preopt: {
+        enabled: false,
+    },
+    system_ext_specific: true,
+}
+
+android_app_import {
+    name: "mediatek-res",
+    owner: "motorola",
+    apk: "proprietary/system_ext/app/mediatek-res/mediatek-res.apk",
+    preprocessed: true,
+    presigned: true,
+    dex_preopt: {
+        enabled: false,
+    },
+    system_ext_specific: true,
+}
+
+android_app_import {
+    name: "ImsService",
+    owner: "motorola",
+    apk: "proprietary/system_ext/priv-app/ImsService/ImsService.apk",
+    certificate: "platform",
+    dex_preopt: {
+        enabled: false,
+    },
+    privileged: true,
+    system_ext_specific: true,
+}
+
+android_app_import {
+    name: "MtkCapCtrl",
+    owner: "motorola",
+    apk: "proprietary/system_ext/priv-app/MtkCapCtrl/MtkCapCtrl.apk",
+    certificate: "platform",
+    dex_preopt: {
+        enabled: false,
+    },
+    privileged: true,
+    system_ext_specific: true,
+}
+
+android_app_import {
+    name: "MtkGbaService",
+    owner: "motorola",
+    apk: "proprietary/system_ext/priv-app/MtkGbaService/MtkGbaService.apk",
+    certificate: "platform",
+    dex_preopt: {
+        enabled: false,
+    },
+    privileged: true,
+    system_ext_specific: true,
+}
+
+android_app_import {
+    name: "MtkTelephonyAssist",
+    owner: "motorola",
+    apk: "proprietary/system_ext/priv-app/MtkTelephonyAssist/MtkTelephonyAssist.apk",
+    certificate: "platform",
+    dex_preopt: {
+        enabled: false,
+    },
+    privileged: true,
+    system_ext_specific: true,
+}
+
+android_app_import {
+    name: "RcsUaService",
+    owner: "motorola",
+    apk: "proprietary/system_ext/priv-app/RcsUaService/RcsUaService.apk",
+    certificate: "platform",
+    dex_preopt: {
+        enabled: false,
+    },
+    privileged: true,
+    system_ext_specific: true,
+}
+
+android_app_import {
+    name: "rcsConfigService",
+    owner: "motorola",
+    apk: "proprietary/system_ext/priv-app/rcsConfigService/rcsConfigService.apk",
+    preprocessed: true,
+    presigned: true,
+    dex_preopt: {
+        enabled: false,
+    },
+    privileged: true,
+    system_ext_specific: true,
+}
+
+dex_import {
+    name: "moto-telephony",
+    owner: "motorola",
+    jars: [
+        "proprietary/system/framework/moto-telephony.jar",
+    ],
+}
+
+dex_import {
+    name: "CapCtrlInterface",
+    owner: "motorola",
+    jars: [
+        "proprietary/system_ext/framework/CapCtrlInterface.jar",
+    ],
+    system_ext_specific: true,
+}
+
+dex_import {
+    name: "com.mediatek.ims.rcsua",
+    owner: "motorola",
+    jars: [
+        "proprietary/system_ext/framework/com.mediatek.ims.rcsua.jar",
+    ],
+    system_ext_specific: true,
+}
+
+dex_import {
+    name: "mediatek-carrier-config-manager",
+    owner: "motorola",
+    jars: [
+        "proprietary/system_ext/framework/mediatek-carrier-config-manager.jar",
+    ],
+    system_ext_specific: true,
+    use_generic_config: true,
+}
+
+dex_import {
+    name: "mediatek-common",
+    owner: "motorola",
+    jars: [
+        "proprietary/system_ext/framework/mediatek-common.jar",
+    ],
+    system_ext_specific: true,
+    use_generic_config: true,
+}
+
+dex_import {
+    name: "mediatek-framework",
+    owner: "motorola",
+    jars: [
+        "proprietary/system_ext/framework/mediatek-framework.jar",
+    ],
+    system_ext_specific: true,
+    use_generic_config: true,
+}
+
+dex_import {
+    name: "mediatek-ims-base",
+    owner: "motorola",
+    jars: [
+        "proprietary/system_ext/framework/mediatek-ims-base.jar",
+    ],
+    system_ext_specific: true,
+    use_generic_config: true,
+}
+
+dex_import {
+    name: "mediatek-ims-oem-plugin",
+    owner: "motorola",
+    jars: [
+        "proprietary/system_ext/framework/mediatek-ims-oem-plugin.jar",
+    ],
+    system_ext_specific: true,
+}
+
+dex_import {
+    name: "mtk-moto-ims-ext",
+    owner: "motorola",
+    jars: [
+        "proprietary/system_ext/framework/mtk-moto-ims-ext.jar",
+    ],
+    system_ext_specific: true,
+}
+
+dex_import {
+    name: "mtk-moto-telephony-ext",
+    owner: "motorola",
+    jars: [
+        "proprietary/system_ext/framework/mtk-moto-telephony-ext.jar",
+    ],
+    system_ext_specific: true,
+}
+
+dex_import {
+    name: "mtk-telephony-common",
+    owner: "motorola",
+    jars: [
+        "proprietary/system_ext/framework/mtk-telephony-common.jar",
+    ],
+    system_ext_specific: true,
+}
+
+cc_prebuilt_binary {
+    name: "android.hardware.audio.parameter_parser.service",
+    owner: "motorola",
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/bin/hw/android.hardware.audio.parameter_parser.service",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    check_elf_files: false,
+    strip: {
+        none: true,
+    },
+    prefer: true,
+    relative_install_path: "hw",
+    system_ext_specific: true,
+}
+
+cc_prebuilt_binary {
+    name: "terservice",
+    owner: "motorola",
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/bin/terservice",
+            ],
+            shared_libs: [
+                "libutils",
+                "libterservice",
+                "libbinder",
+                "liblog",
+                "libcutils",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    strip: {
+        none: true,
+    },
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_binary {
+    name: "thermald",
+    owner: "motorola",
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/bin/thermald",
+            ],
+            shared_libs: [
+                "libcutils",
+                "libc",
+                "libutils",
+                "libbinder",
+                "liblog",
+                "libc++",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    strip: {
+        none: true,
+    },
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_binary {
+    name: "vtservice",
+    owner: "motorola",
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/bin/vtservice",
+            ],
+            shared_libs: [
+                "libbinder",
+                "libutils",
+                "libcutils",
+                "liblog",
+                "libmtk_vt_service",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    strip: {
+        none: true,
+    },
+    prefer: true,
+    system_ext_specific: true,
+}

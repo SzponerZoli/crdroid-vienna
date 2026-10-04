@@ -1,0 +1,41 @@
+{
+  "method": "avbtool info_image from exact-model stock images",
+  "stock_root_vbmeta": {
+    "image": "vbmeta.img",
+    "algorithm": "SHA256_RSA2048",
+    "public_key_sha1": "fd29248b78aa9d6427e8f569eda90be62b9fa0ee",
+    "rollback_index": 25,
+    "header_rollback_index_location": 0,
+    "chain_partitions": [
+      {
+        "partition": "vbmeta_system",
+        "rollback_index_location": 2
+      }
+    ],
+    "described_partitions": [
+      "boot",
+      "dtbo",
+      "init_boot",
+      "product",
+      "system_dlkm",
+      "vbmeta_system",
+      "vendor",
+      "vendor_boot",
+      "vendor_dlkm"
+    ]
+  },
+  "stock_vbmeta_system": {
+    "image": "vbmeta_system.img",
+    "algorithm": "SHA256_RSA2048",
+    "public_key_sha1": "fd29248b78aa9d6427e8f569eda90be62b9fa0ee",
+    "rollback_index": 25,
+    "header_rollback_index_location": 0,
+    "chain_partitions": [],
+    "described_partitions": [
+      "system",
+      "system_ext"
+    ]
+  },
+  "prototype_test_key_sha1": "cdbb77177f731920bbe0a0f94f84d9038ae0617d",
+  "prototype_key_matches_stock": false
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Values from the XT2409-1 RETEU W1UIS36H.39-25-8 framework overlay. -->
+<resources>
+    <string name="config_mainBuiltInDisplayCutout" translatable="false">M -45,0 L 45,0 L 45,120 L -45,120 Z</string>
+    <dimen name="status_bar_height">120px</dimen>
+    <dimen name="status_bar_height_portrait">120px</dimen>
+    <dimen name="status_bar_height_landscape">28dp</dimen>
+
+    <!-- IMS: stock enables VoLTE, video calling and Wi-Fi calling in its product RRO. -->
+    <bool name="config_device_volte_available">true</bool>
+    <bool name="config_device_vt_available">true</bool>
+    <bool name="config_device_wfc_ims_available">true</bool>
+</resources>
