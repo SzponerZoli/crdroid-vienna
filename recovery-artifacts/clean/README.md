@@ -30,7 +30,7 @@ It needs [`patches/bootable-recovery-vienna-fixes.patch`](../../patches/bootable
   detection of USB drives inside recovery is lost.
 
 Known limitation: no `adb shell` in recovery (the stock policy has no `su`
-domain). `adb reboot`, `adb reboot bootloader` and sideload work.
+domain). `adb reboot` and `adb reboot bootloader` work; sideload is untested.
 
 ## Build
 

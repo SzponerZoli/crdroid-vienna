@@ -27,20 +27,26 @@ Tested on 2026-10-04 on XT2409-1 RETEU, stock base `W1UIS36H.39-25-8`:
 | --- | --- | --- |
 | Boot, setup wizard, ADB | Works | SELinux enforcing |
 | Mobile data, both SIMs (DSDS) | Works | LTE on both SIMs; tested with Yettel HU and Telekom HU |
-| Voice calls, VoLTE | Works | MediaTek IMS bound on both SIMs; carrier VoLTE config for 216-01 and 216-30 |
+| Voice calls | **Broken** | Calls ring and dial, but drop as soon as they are answered (see Known issues) |
+| VoLTE registration | Works | MediaTek IMS registered on both SIMs; carrier VoLTE config for 216-01 and 216-30 |
 | Camera | Works | Stock Motorola camera stack |
 | GPS / location | Works | microG is the network location provider |
 | Fingerprint (under-display) | Works | Uses the Moto panel's `HIGH_BRIGHT_FOD` mode with a dim layer, like stock |
 | Face unlock | Works | |
 | Bluetooth, incl. audio | Works | A2DP hardware offload is disabled (software encoding) |
 | microG | Bundled | GmsCore 0.3.17 + Companion, signature spoofing via crDroid |
-| Lineage recovery (optional) | Works | Enforcing stock SELinux policy; menu, reboot and sideload; no `adb shell` ([details](recovery-artifacts/clean/README.md)) |
+| Lineage recovery (optional) | Works | Enforcing stock SELinux policy; menu and reboot work, sideload untested; no `adb shell` ([details](recovery-artifacts/clean/README.md)) |
 
 Not tested yet: Wi-Fi calling, video calls, NFC, charging and battery life,
 OTA updates. Untested does not mean broken. Reports are welcome.
 
 ### Known issues
 
+- **Voice calls drop when answered.** Incoming calls ring and outgoing calls
+  dial, but the call disconnects the moment either side answers, so no
+  conversation is possible. Calls worked in earlier testing on 2026-10-04 and
+  the cause is still under investigation. Do not rely on this build as your
+  only phone.
 - **The Lineage recovery is built separately** and flashed into
   `vendor_boot`; see [its README](recovery-artifacts/clean/README.md). The
   install steps below keep Motorola's stock recovery.
