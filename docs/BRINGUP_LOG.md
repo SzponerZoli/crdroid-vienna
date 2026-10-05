@@ -430,3 +430,19 @@ Open: the recovery on the device is the permissive debug `perm3`
   `recovery-artifacts/clean/clean-vendor_boot.img`, `vbmeta_a` =
   `recovery-artifacts/clean/clean-vbmeta-crdroid.img` (perm3-apn root with
   the clean vendor_boot digest).
+
+## 2026-10-05: VoLTE calls dropped on answer
+
+- Symptom: calls rang and dialled, then dropped the moment either side
+  answered. Messenger (VoIP) calls worked.
+- Cause: on the SIP 200 OK, `com.mediatek.ims` (domain `radio`) sets
+  `persist.moto.vt.timegap`. crDroid labelled it `default_prop`, so init
+  refused it ("SELinux permission check failed"), the IMS app threw
+  RuntimeException and crashed, and the call ended (`cause=LOCAL`). Stock
+  Motorola system_ext policy labels `persist.moto.vt.{timegap,sequencegap}`
+  as `system_moto_ims_vt_prop` and allows `radio` to set it.
+- Fix: `device/motorola/vienna/sepolicy/private/{property.te,
+  property_contexts,radio.te}` with the same type and rule. Verified: VoLTE
+  call answered, audio both ways, normal clearing (Q.850 16).
+- Also in that build: `persist.bluetooth.a2dp_offload.disabled=true` in product.
+- Current slot A root vbmeta: `recovery-artifacts/clean/clean-vbmeta-crdroid-callfix.img`.

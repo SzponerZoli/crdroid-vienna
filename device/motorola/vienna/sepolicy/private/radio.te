@@ -1,0 +1,3 @@
+# Without this, com.mediatek.ims crashes when a VoLTE call is answered and the
+# call drops ("failed to set system property persist.moto.vt.timegap").
+set_prop(radio, system_moto_ims_vt_prop)

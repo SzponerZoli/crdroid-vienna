@@ -1,0 +1,3 @@
+# Motorola IMS video-telephony gap properties, set by the MediaTek IMS app
+# (radio) when a VoLTE call connects. Same type as stock system_ext policy.
+system_internal_prop(system_moto_ims_vt_prop)

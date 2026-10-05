@@ -10,8 +10,7 @@ the [bring-up log](docs/BRINGUP_LOG.md).
 | Build crDroid system, system_ext and product against stock vendor | Done |
 | Stock vendor SELinux, VINTF and VNDK compatibility (host checks) | Done |
 | First boot on the phone | Done (2026-10-03) |
-| Telephony: data and VoLTE registration on both SIMs | Done |
-| Voice calls | Broken: calls drop as soon as they are answered (regression, under investigation) |
+| Telephony: data, VoLTE and voice calls on both SIMs | Done |
 | Camera, GPS, fingerprint, face unlock, Bluetooth audio | Done |
 | microG with signature spoofing | Done |
 | Wi-Fi calling, video calls, NFC, battery and charging | Not tested |

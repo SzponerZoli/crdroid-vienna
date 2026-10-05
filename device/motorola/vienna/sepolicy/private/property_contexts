@@ -1,0 +1,2 @@
+persist.moto.vt.timegap            u:object_r:system_moto_ims_vt_prop:s0
+persist.moto.vt.sequencegap        u:object_r:system_moto_ims_vt_prop:s0
