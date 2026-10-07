@@ -34,10 +34,13 @@ Tested on 2026-10-04 on XT2409-1 RETEU, stock base `W1UIS36H.39-25-8`:
 | Face unlock | Works | |
 | Bluetooth, incl. audio | Works | A2DP hardware offload is disabled (software encoding) |
 | microG | Bundled | GmsCore 0.3.17 + Companion, signature spoofing via crDroid |
+| Video calls (ViLTE) | Works | |
+| NFC | Works | |
+| Battery life | Good | Comparable to stock in the developer's use |
 | Lineage recovery (optional) | Works | Enforcing stock SELinux policy; menu, reboot and sideload install work; no `adb shell` ([details](recovery-artifacts/clean/README.md)) |
 
-Not tested yet: Wi-Fi calling, video calls, NFC, charging and battery life,
-OTA updates. Untested does not mean broken. Reports are welcome.
+Not tested yet: Wi-Fi calling, OTA updates. Untested does not mean broken.
+Reports are welcome.
 
 ### Known issues
 

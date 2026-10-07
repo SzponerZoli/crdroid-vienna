@@ -13,7 +13,8 @@ the [bring-up log](docs/BRINGUP_LOG.md).
 | Telephony: data, VoLTE and voice calls on both SIMs | Done |
 | Camera, GPS, fingerprint, face unlock, Bluetooth audio | Done |
 | microG with signature spoofing | Done |
-| Wi-Fi calling, video calls, NFC, battery and charging | Not tested |
+| Video calls, NFC, battery life | Done (2026-10-07): confirmed by the owner |
+| Wi-Fi calling | Not tested |
 | Boot with stock `vendor_boot` and generated root vbmeta (public install path) | Not tested |
 | Lineage recovery for this firmware | Done (2026-10-04): enforcing stock policy; see `recovery-artifacts/clean/` |
 | Re-enable A2DP hardware offload | Open: offload starts but plays silence |
