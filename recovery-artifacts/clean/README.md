@@ -35,6 +35,9 @@ crDroid A/B package (the recovery trusts the build's `otacerts.zip`).
 
 ## Build
 
+Needs the crDroid checkout, `lz4`, `cpio`, `readelf` and, for `--font-scale`,
+Python Pillow (`pip install pillow`).
+
 ```sh
 bash tools/build_recovery.sh            # lunch lineage_vienna_recovery; mka vendorbootimage
 STOCK=crdroid/device/motorola/vienna/prebuilts/vendor_boot.img

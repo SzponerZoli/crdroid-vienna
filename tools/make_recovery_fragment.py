@@ -89,7 +89,10 @@ def compile_wrapper(clang, out):
 
 def scale_font(src, dst, scale):
     """Scale the recovery font strip (96 glyphs x 2 rows) by an integer factor."""
-    from PIL import Image
+    try:
+        from PIL import Image
+    except ImportError:
+        sys.exit("--font-scale needs Pillow: pip install pillow (or use --font-scale 1)")
 
     with Image.open(src) as font:
         font.resize((font.width * scale, font.height * scale), Image.NEAREST).save(dst)
@@ -109,6 +112,10 @@ def main():
 
     root = args.recovery_root.resolve(strict=True)
     binary = root / "system/bin/recovery"
+    otacerts = root / "system/etc/security/otacerts.zip"
+    for required in (binary, otacerts):
+        if not required.is_file():
+            raise FileNotFoundError(f"{required.relative_to(root)} not found in recovery build output")
     with tempfile.TemporaryDirectory() as tmp:
         tmp = pathlib.Path(tmp)
         run(sys.executable, str(UNPACK), "--boot_img", str(args.stock_vendor_boot),
@@ -129,10 +136,12 @@ def main():
                  f"F:system/etc/init/hw/init.rc:{init_rc}:644",
                  # Trust the crDroid build's OTA keys (zip and A/B payload
                  # signatures) instead of Motorola's, so crDroid packages install.
-                 f"F:system/etc/security/otacerts.zip:{root / 'system/etc/security/otacerts.zip'}:644",
+                 f"F:system/etc/security/otacerts.zip:{otacerts}:644",
                  f"D:{LIB_DIR}:755"]
         for name, path in sorted(library_closure(root, binary).items()):
             specs.append(f"F:{LIB_DIR}/{name}:{path}:644")
+        # Directory entries must precede their files in the archive.
+        specs.append("D:res:755")
         for path in sorted((root / "res").rglob("*")):
             rel = path.relative_to(root).as_posix()
             if rel == "res/images/font.png" and args.font_scale > 1:
@@ -140,7 +149,6 @@ def main():
                 scale_font(path, scaled, args.font_scale)
                 path = scaled
             specs.append(f"D:{rel}:755" if path.is_dir() else f"F:{rel}:{path}:644")
-        specs.insert(4, "D:res:755")
         out_cpio = tmp / "out.cpio"
         cpio_add.build(str(base), str(out_cpio), specs)
         run("lz4", "-l", "-12", "-f", str(out_cpio), str(args.out.resolve()), stdout=subprocess.DEVNULL)
