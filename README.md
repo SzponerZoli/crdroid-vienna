@@ -121,6 +121,30 @@ of several hundred GB and several hours of build time.
 
 ## Installing
 
+### Fastboot package (recommended)
+
+A prebuilt package (`crdroid-12-vienna-<date>-fastboot.zip`) contains the
+tested image set, `flash.sh` (Linux/macOS), `flash.bat` (Windows) and a
+README. With the phone in bootloader mode:
+
+```sh
+./flash.sh --wipe     # from stock or another ROM (formats userdata)
+./flash.sh            # updating an existing install of this build
+```
+
+The script verifies the image checksums, flashes the root `vbmeta` and the
+Lineage recovery (`vendor_boot`) in the bootloader, then `system`,
+`system_ext`, `product` and `vbmeta_system` in fastbootd, and reboots. The
+same requirements as below apply; in particular the active slot must run stock
+`W1UIS36H.39-25-8`. `flash.sh` was tested on the developer's phone;
+`flash.bat` uses the same steps but is untested and skips the checksum check.
+
+The package is built with `tools/make_fastboot_package.py`, which refuses an
+image set whose vbmeta digests do not match. A sideloadable OTA zip installs
+but does not boot yet (see the [bring-up log](docs/BRINGUP_LOG.md)).
+
+### From your own build
+
 **Requirements:**
 
 - XT2409-1 RETEU with an **unlocked bootloader**.

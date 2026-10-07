@@ -17,5 +17,6 @@ the [bring-up log](docs/BRINGUP_LOG.md).
 | Boot with stock `vendor_boot` and generated root vbmeta (public install path) | Not tested |
 | Lineage recovery for this firmware | Done (2026-10-04): enforcing stock policy; see `recovery-artifacts/clean/` |
 | Re-enable A2DP hardware offload | Open: offload starts but plays silence |
-| Flashable package (OTA ZIP or fastboot script) | Open |
+| Fastboot package (`tools/make_fastboot_package.py`, `flash.sh`) | Done (2026-10-07): tested on the developer phone |
+| Sideloadable OTA zip | Open: installs, but slot B boots only 14 of 40 APEX modules (`netbpfload-missing`) |
 | Wider device and firmware coverage (other XT2409 SKUs) | Open: needs testers |
