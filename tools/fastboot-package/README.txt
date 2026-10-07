@@ -1,6 +1,10 @@
 crDroid 12 (Android 16) for Motorola Edge 50 Neo XT2409-1 (vienna)
 Unofficial build, fastboot package. https://github.com/SzponerZoli/crdroid-vienna
 
+VIBE CODED: this port was built almost entirely by AI coding assistants
+(ChatGPT, then Claude), directed and tested by the owner on a single phone.
+It has not been reviewed by an experienced Android/MediaTek developer.
+
 USE AT YOUR OWN RISK. Flashing can erase your data or leave the phone
 unbootable. Provided "as is", without warranty (Apache License 2.0, sections
 7 and 8). Not affiliated with Motorola, MediaTek or the crDroid team.
