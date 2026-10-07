@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Physical pixel size in micrometres (25400 / 460.144 dpi). SystemUI sizes
+         the lock screen fingerprint icon as udfps_icon_size / pixel_pitch; the
+         default -1 gives a negative size and a garbled icon. -->
+    <item name="pixel_pitch" format="float" type="dimen">55.2</item>
+
     <!-- The Egis optical UDFPS needs a bright spot to capture a usable image.
          Stock enables the panel's HIGH_BRIGHT_FOD mode through the Moto panel
          HAL and dims the rest of the screen. -->

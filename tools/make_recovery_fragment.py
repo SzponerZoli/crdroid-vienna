@@ -13,6 +13,8 @@ Motorola's stock fragment, init, adbd, SELinux policy and libraries, and adds:
   LD_LIBRARY_PATH only works for a second exec inside the recovery domain;
 - system/etc/init/hw/init.rc: stock, plus LD_LIBRARY_PATH for the recovery
   service and ADB enabled at boot;
+- system/etc/security/otacerts.zip: the build's OTA certificates, so the
+  recovery accepts crDroid packages (Motorola's only trusts Motorola OTAs);
 - res/: Lineage recovery UI resources.
 
 The result is an lz4-legacy compressed newc cpio for
@@ -85,6 +87,14 @@ def compile_wrapper(clang, out):
     )
 
 
+def scale_font(src, dst, scale):
+    """Scale the recovery font strip (96 glyphs x 2 rows) by an integer factor."""
+    from PIL import Image
+
+    with Image.open(src) as font:
+        font.resize((font.width * scale, font.height * scale), Image.NEAREST).save(dst)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--stock-vendor-boot", type=pathlib.Path, required=True)
@@ -92,6 +102,8 @@ def main():
                         help="out-recovery/target/product/vienna/recovery/root")
     parser.add_argument("--clang", required=True, help="clang from crdroid/prebuilts/clang")
     parser.add_argument("--out", type=pathlib.Path, required=True)
+    parser.add_argument("--font-scale", type=int, default=1,
+                        help="enlarge the UI/log font by this integer factor (18x32 -> 36x64 at 2)")
     args = parser.parse_args()
     import cpio_add  # noqa: E402  (recovery-artifacts/working/cpio_add.py)
 
@@ -115,11 +127,18 @@ def main():
         specs = [f"F:system/bin/recovery:{wrapper}:755",
                  f"F:system/bin/recovery.real:{binary}:755",
                  f"F:system/etc/init/hw/init.rc:{init_rc}:644",
+                 # Trust the crDroid build's OTA keys (zip and A/B payload
+                 # signatures) instead of Motorola's, so crDroid packages install.
+                 f"F:system/etc/security/otacerts.zip:{root / 'system/etc/security/otacerts.zip'}:644",
                  f"D:{LIB_DIR}:755"]
         for name, path in sorted(library_closure(root, binary).items()):
             specs.append(f"F:{LIB_DIR}/{name}:{path}:644")
         for path in sorted((root / "res").rglob("*")):
             rel = path.relative_to(root).as_posix()
+            if rel == "res/images/font.png" and args.font_scale > 1:
+                scaled = tmp / "font.png"
+                scale_font(path, scaled, args.font_scale)
+                path = scaled
             specs.append(f"D:{rel}:755" if path.is_dir() else f"F:{rel}:{path}:644")
         specs.insert(4, "D:res:755")
         out_cpio = tmp / "out.cpio"

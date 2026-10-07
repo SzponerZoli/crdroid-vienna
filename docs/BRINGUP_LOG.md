@@ -446,3 +446,26 @@ Open: the recovery on the device is the permissive debug `perm3`
   call answered, audio both ways, normal clearing (Q.850 16).
 - Also in that build: `persist.bluetooth.a2dp_offload.disabled=true` in product.
 - Current slot A root vbmeta: `recovery-artifacts/clean/clean-vbmeta-crdroid-callfix.img`.
+
+## 2026-10-07: sideload test, recovery keys, lock screen icon
+
+- Recovery font: `tools/make_recovery_fragment.py --font-scale 2` scales the
+  18x32 recovery font to 36x64 (readable on the 1200x2670 panel).
+- Sideload of `lineage_vienna-ota.zip` (built 2026-10-05, `mka otapackage`)
+  failed with error 26 `kDownloadMetadataSignatureMismatch`: the recovery
+  ramdisk carried Motorola's `otacerts.zip`. The fragment now ships the
+  build's `otacerts.zip` (AOSP testkey + Lineage cert). After that the full
+  payload installed into slot B.
+- Slot B then rebooted early with `netbpfload-missing`: only 14 of 40 APEX
+  modules activated (all compressed `.capex` ones missing, incl. tethering).
+  Root cause not yet found (apexd logs were rate-limited; a diagnostic boot
+  with `printk.devkmsg=on` froze). Slot B currently holds this failed install
+  plus diagnostic `vendor_boot_b`/`vbmeta_b`; slot A is active and fine.
+- `BoardConfig.mk` ships `prebuilts/vendor_boot-recovery.img` as vendor_boot
+  when staged (Lineage recovery inside OTA packages), otherwise stock.
+- Lock screen fingerprint icon was garbled: `pixel_pitch` defaulted to -1, so
+  `iconSize = udfps_icon_size / pixel_pitch` became -6000 and the icon padding
+  3101 px. The device SystemUI overlay now sets `pixel_pitch` 55.2 um
+  (460.144 dpi); padding is 47 px and the icon renders correctly.
+- Current slot A: `vendor_boot_a` = `recovery-artifacts/clean/clean-vendor_boot.img`
+  (otacerts + 2x font), `vbmeta_a` = `recovery-artifacts/clean/clean-vbmeta-crdroid-callfix.img`.

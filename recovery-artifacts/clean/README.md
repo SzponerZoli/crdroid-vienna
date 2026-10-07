@@ -30,7 +30,8 @@ It needs [`patches/bootable-recovery-vienna-fixes.patch`](../../patches/bootable
   detection of USB drives inside recovery is lost.
 
 Known limitation: no `adb shell` in recovery (the stock policy has no `su`
-domain). `adb reboot` and `adb reboot bootloader` work; sideload is untested.
+domain). `adb reboot` and `adb reboot bootloader` work. Sideload installs a full
+crDroid A/B package (the recovery trusts the build's `otacerts.zip`).
 
 ## Build
 
@@ -40,7 +41,7 @@ STOCK=crdroid/device/motorola/vienna/prebuilts/vendor_boot.img
 python3 tools/make_recovery_fragment.py --stock-vendor-boot $STOCK \
     --recovery-root crdroid/out-recovery/target/product/vienna/recovery/root \
     --clang $PWD/crdroid/prebuilts/clang/host/linux-x86/clang-r574158/bin/clang \
-    --out recovery-artifacts/clean/recovery-fragment.cpio.lz4
+    --font-scale 2 --out recovery-artifacts/clean/recovery-fragment.cpio.lz4
 python3 tools/assemble_recovery_vendorboot.py --stock $STOCK \
     --fragment recovery-artifacts/clean/recovery-fragment.cpio.lz4 \
     --out recovery-artifacts/clean/clean-vendor_boot.img

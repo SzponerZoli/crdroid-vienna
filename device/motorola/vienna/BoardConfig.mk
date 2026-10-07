@@ -27,7 +27,13 @@ BOARD_DTBOIMG_PARTITION_SIZE := 8388608
 BOARD_PREBUILT_BOOTIMAGE := $(STOCK_IMAGES)/boot.img
 BOARD_KERNEL_IMAGE_NAME := Image.gz
 TARGET_PREBUILT_KERNEL := $(STOCK_IMAGES)/Image.gz
+# Use the Lineage recovery vendor_boot (recovery-artifacts/clean/README.md)
+# when it has been staged next to the stock images; otherwise ship stock.
+ifneq ($(wildcard $(STOCK_IMAGES)/vendor_boot-recovery.img),)
+BOARD_PREBUILT_VENDOR_BOOTIMAGE := $(STOCK_IMAGES)/vendor_boot-recovery.img
+else
 BOARD_PREBUILT_VENDOR_BOOTIMAGE := $(STOCK_IMAGES)/vendor_boot.img
+endif
 BOARD_PREBUILT_INIT_BOOT_IMAGE := $(STOCK_IMAGES)/init_boot.img
 BOARD_PREBUILT_DTBOIMAGE := $(STOCK_IMAGES)/dtbo.img
 TARGET_NO_RECOVERY := true
