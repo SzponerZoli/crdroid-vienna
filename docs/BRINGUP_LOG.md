@@ -469,3 +469,18 @@ Open: the recovery on the device is the permissive debug `perm3`
   (460.144 dpi); padding is 47 px and the icon renders correctly.
 - Current slot A: `vendor_boot_a` = `recovery-artifacts/clean/clean-vendor_boot.img`
   (otacerts + 2x font), `vbmeta_a` = `recovery-artifacts/clean/clean-vbmeta-crdroid-callfix.img`.
+
+## 2026-10-07 (late): fingerprint recognition rate
+
+- About 1 in 4 unlocks failed. The RBS HAL captures ~125 ms after
+  onPointerDown and does not wait for UI_READY; UI_READY arrived at 145-185 ms,
+  and the white illumination dot was drawn only after UI_READY. Successful
+  matches had quality ~12000, failures 0-6000.
+- Fix (in `patches/frameworks-base-systemui-udfps-moto-panel-hbm.patch`):
+  `UdfpsTouchOverlay` draws the illumination dot before enabling the display
+  mode; `UdfpsMotoPanelHbm` keeps the dim layer attached (transparent when
+  idle), enables HIGH_BRIGHT_FOD on the first frame commit and reports ready
+  immediately (no 20/80 ms delays).
+- Status: built, NOT yet flashed or tested. Next: flash system, system_ext and
+  vbmeta_system, then repeat the 10-unlock test and compare capture timing and
+  quality. Consider re-enrolling the fingerprint afterwards.

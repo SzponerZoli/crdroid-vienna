@@ -109,10 +109,10 @@ index 670a8e638..2db357a95 100644
          Trace.endSection()
 diff --git a/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsMotoPanelHbm.kt b/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsMotoPanelHbm.kt
 new file mode 100644
-index 000000000..1f1137c59
+index 000000000..4bcf46128
 --- /dev/null
 +++ b/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsMotoPanelHbm.kt
-@@ -0,0 +1,234 @@
+@@ -0,0 +1,232 @@
 +/*
 + * Copyright (C) 2026 The LineageOS Project
 + *
@@ -159,7 +159,7 @@ index 000000000..1f1137c59
 +private const val PANEL_MODE_NORMAL = 0
 +private const val PANEL_MODE_HIGH_BRIGHT_FOD = 4
 +
-+// Time for the dim layer to reach the screen before HBM, and for HBM to end before it goes.
++// Time for the panel to leave HBM before the dim layer is cleared.
 +private const val DIM_SETTLE_MS = 20L
 +
 +/**
@@ -175,9 +175,6 @@ index 000000000..1f1137c59
 +    private val windowManager = context.getSystemService(WindowManager::class.java)!!
 +    private val displayManager = context.getSystemService(DisplayManager::class.java)!!
 +    private val handler = Handler(Looper.getMainLooper())
-+    private val readyDelayMs =
-+        res.getInteger(com.android.systemui.res.R.integer.config_udfpsBoostBrightnessDelayMs)
-+            .toLong()
 +    private val hbmNits =
 +        res.getInteger(com.android.systemui.res.R.integer.config_udfpsMotoPanelHbmNits).toFloat()
 +    private val brightnessToNits: List<Pair<Float, Float>> =
@@ -227,39 +224,36 @@ index 000000000..1f1137c59
 +            return
 +        }
 +
++        // The sensor captures ~120 ms after finger down without waiting for UI_READY, so
++        // HBM must come up fast. The dim layer stays attached (transparent while idle);
++        // showing it only needs one redraw, and HBM follows on that frame's commit so the
++        // rest of the display never flashes bright.
 +        dimView.update(location, radius, dimAlpha())
 +        if (!dimShown) {
 +            windowManager.addView(dimView, dimLayoutParams)
 +            dimShown = true
 +        }
-+
-+        // Turn on HBM only once the dim layer is on screen, so the rest of the display
-+        // never flashes bright.
 +        dimView.viewTreeObserver.registerFrameCommitCallback {
 +            if (token != generation) return@registerFrameCommitCallback
-+            schedule(DIM_SETTLE_MS) {
-+                if (!setPanelMode(PANEL_MODE_HIGH_BRIGHT_FOD)) {
-+                    removeDimLayer()
-+                }
-+                schedule(readyDelayMs) { onReady.run() }
++            if (!setPanelMode(PANEL_MODE_HIGH_BRIGHT_FOD)) {
++                hideDimLayer()
 +            }
++            onReady.run()
 +        }
 +        dimView.invalidate()
 +    }
 +
-+    /** Leaves panel HBM and removes the dim layer once the panel is back to normal. */
++    /** Leaves panel HBM and clears the dim layer once the panel is back to normal. */
 +    fun disable() {
 +        cancelPending()
 +        generation++
 +        setPanelMode(PANEL_MODE_NORMAL)
-+        schedule(DIM_SETTLE_MS) { removeDimLayer() }
++        schedule(DIM_SETTLE_MS) { hideDimLayer() }
 +    }
 +
-+    private fun removeDimLayer() {
-+        if (dimShown) {
-+            windowManager.removeView(dimView)
-+            dimShown = false
-+        }
++    private fun hideDimLayer() {
++        dimView.clear()
++        dimView.invalidate()
 +    }
 +
 +    private fun schedule(delayMs: Long, action: () -> Unit) {
@@ -339,6 +333,10 @@ index 000000000..1f1137c59
 +            paint.alpha = (alpha * 255).toInt()
 +        }
 +
++        fun clear() {
++            paint.alpha = 0
++        }
++
 +        override fun onDraw(canvas: Canvas) {
 +            path.reset()
 +            path.addRect(0f, 0f, width.toFloat(), height.toFloat(), Path.Direction.CW)
@@ -347,3 +345,22 @@ index 000000000..1f1137c59
 +        }
 +    }
 +}
+diff --git a/packages/SystemUI/src/com/android/systemui/biometrics/ui/view/UdfpsTouchOverlay.kt b/packages/SystemUI/src/com/android/systemui/biometrics/ui/view/UdfpsTouchOverlay.kt
+index 3cb87968a..360e2d65c 100644
+--- a/packages/SystemUI/src/com/android/systemui/biometrics/ui/view/UdfpsTouchOverlay.kt
++++ b/packages/SystemUI/src/com/android/systemui/biometrics/ui/view/UdfpsTouchOverlay.kt
+@@ -63,10 +63,10 @@ class UdfpsTouchOverlay(context: Context, attrs: AttributeSet?) : FrameLayout(co
+     }
+ 
+     private fun doIlluminate(surface: Surface?, onDisplayConfigured: Runnable?) {
+-        udfpsDisplayMode?.enable {
+-            onDisplayConfigured?.run()
+-            ghbmView?.drawIlluminationDot(RectF(sensorRect))
+-        }
++        // Light the sensor area right away: optical sensors start capturing on finger
++        // down and do not wait for UI_READY, so a late dot leaves the first image dark.
++        ghbmView?.drawIlluminationDot(RectF(sensorRect))
++        udfpsDisplayMode?.enable { onDisplayConfigured?.run() }
+     }
+ 
+     fun unconfigureDisplay() {
