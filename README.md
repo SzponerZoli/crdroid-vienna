@@ -1,14 +1,24 @@
 # crDroid 12 for Motorola Edge 50 Neo (`vienna`)
 
+> [!CAUTION]
+> **This port is "vibe coded": it was built almost entirely by AI coding
+> assistants** (ChatGPT, then Claude), directed and tested by the owner on one
+> phone. The device tree, patches, SELinux rules, tools and documentation were
+> written by AI and have **not been reviewed by an experienced Android or
+> MediaTek developer**. Expect mistakes the AI did not notice. Treat everything
+> here as experimental, check it yourself before relying on it, and do not use
+> this ROM on a phone you cannot afford to lose or restore.
+
 An unofficial port of **crDroid 12 (Android 16)** to the Motorola Edge 50 Neo,
 **XT2409-1 RETEU** (MediaTek Dimensity 7300 / MT6878). crDroid's system,
 system_ext and product images run on top of the phone's unmodified stock
 Motorola boot, vendor and kernel images (firmware `W1UIS36H.39-25-8`).
 
 > **Status: experimental, single-device tested.** It runs as the daily system on
-> one XT2409-1 RETEU. There is no release build or OTA package yet. Read the whole [Installing](#installing) section before you
-> touch your phone; you need to be comfortable restoring stock firmware with
-> fastboot.
+> one XT2409-1 RETEU. A fastboot package is available under
+> [Releases](https://github.com/SzponerZoli/crdroid-vienna/releases); there is no
+> OTA zip yet. Read the whole [Installing](#installing) section before you touch
+> your phone; you need to be comfortable restoring stock firmware with fastboot.
 
 > [!WARNING]
 > **Use at your own risk.** Unlocking the bootloader and flashing this ROM can
