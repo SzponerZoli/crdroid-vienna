@@ -19,6 +19,7 @@ Motorola boot, vendor and kernel images (firmware `W1UIS36H.39-25-8`).
 > [Releases](https://github.com/SzponerZoli/crdroid-vienna/releases); there is no
 > OTA zip yet. Read the whole [Installing](#installing) section before you touch
 > your phone; you need to be comfortable restoring stock firmware with fastboot.
+> **Only the XT2409-1 RETEU is supported** (see [Supported models](#supported-models)).
 
 > [!WARNING]
 > **Use at your own risk.** Unlocking the bootloader and flashing this ROM can
@@ -28,6 +29,26 @@ Motorola boot, vendor and kernel images (firmware `W1UIS36H.39-25-8`).
 > kind, and the authors accept no liability for any damage or data loss (see
 > sections 7 and 8 of the [license](LICENSE)). Back up everything and keep the
 > stock firmware for your exact model at hand before you start.
+
+## Supported models
+
+| Model | Status |
+| --- | --- |
+| XT2409-1 **RETEU** on stock `W1UIS36H.39-25-8` | Supported (the developer's phone) |
+| XT2409-1 RETEU on another firmware version | Update to `W1UIS36H.39-25-8` first |
+| Any other variant (other regions, other XT2409-x) | **Not supported.** Do not flash the release |
+
+The release only replaces `system`, `system_ext` and `product`; it reuses the
+phone's stock kernel, `boot` and `vendor` images. Its root `vbmeta` carries
+the hashes of the RETEU `W1UIS36H.39-25-8` images, and its `vendor_boot` comes
+from that firmware too. On other stock firmware it will most likely hang at
+the Motorola logo, and flashing the RETEU `vendor_boot` replaces your own.
+The APN and VoLTE settings were only tuned for Hungarian carriers.
+
+Other variants may be portable by building against their own stock firmware
+(see [Building](#building)), but nobody has tried it. If you own one, open an
+issue with your model number (`ro.boot.hardware.sku`), region and firmware
+version instead of flashing, and keep your stock firmware at hand.
 
 ## What works
 
