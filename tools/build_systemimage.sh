@@ -2,7 +2,9 @@
 set -o pipefail
 
 workspace_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-source_dir="$workspace_dir/crdroid"
+# crDroid 13 (Android 17): CRDROID_DIR=crdroid17 TARGET_RELEASE=cp2a
+source_dir="$workspace_dir/${CRDROID_DIR:-crdroid}"
+release="${TARGET_RELEASE:-bp4a}"
 status_file="$source_dir/out/build-systemimage.exit-code"
 log_file="$source_dir/out/build-systemimage.log"
 
@@ -21,8 +23,8 @@ fi
 
 (
     source build/envsetup.sh
-    lunch lineage_vienna bp4a userdebug
-    mka "$@" -j8
+    lunch lineage_vienna "$release" userdebug
+    mka "$@" -j"${JOBS:-$(nproc)}"
 ) >"$log_file" 2>&1
 result=$?
 printf '%s\n' "$result" >"$status_file"

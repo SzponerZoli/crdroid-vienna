@@ -1,5 +1,9 @@
-crDroid 12 (Android 16) for Motorola Edge 50 Neo XT2409-1 (vienna)
+crDroid 13 (Android 17) for Motorola Edge 50 Neo XT2409-1 (vienna)
 Unofficial build, fastboot package. https://github.com/SzponerZoli/crdroid-vienna
+
+PRE-RELEASE: this build has booted on one phone, but calls, video calls,
+fingerprint, camera, Bluetooth audio, NFC and eSIM are not tested on it yet.
+For a tested build use the crDroid 12 package.
 
 VIBE CODED: this port was built almost entirely by AI coding assistants
 (ChatGPT, then Claude), directed and tested by the owner on a single phone.
@@ -23,6 +27,9 @@ INSTALL
 2. Linux/macOS:  ./flash.sh --wipe        Windows:  flash.bat --wipe
    Use --wipe when coming from stock or another ROM (formats userdata).
    Updating an existing install of this build: run without --wipe.
+   Upgrading from the crDroid 12 package without --wipe worked once on the
+   developer's phone. Back up first: after crDroid 13 has started, going back
+   to crDroid 12 needs a wipe.
 3. The phone reboots into crDroid; the first boot takes about a minute.
 
 The script checks the image checksums (SHA256SUMS) before flashing.

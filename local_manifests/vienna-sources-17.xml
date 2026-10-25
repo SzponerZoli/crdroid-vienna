@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  crDroid 13 (manifest branch 17.0, Android 17 / Lineage 24.0) sources for
+  Motorola Edge 50 Neo XT2409-1 RETEU, stock build W1UIS36H.39-25-8. Place in
+  .repo/local_manifests/ of the crdroid17/ checkout. The kernel trees are
+  unchanged research inputs (the ROM uses the stock kernel and vendor).
+-->
+<manifest>
+  <remote name="motorola" fetch="https://github.com/MotorolaMobilityLLC" />
+  <remote name="lineage-mtk" fetch="https://github.com/LineageOS" />
+  <remote name="angry" fetch="https://gitea.angry.im/PeterCxy" />
+  <project name="kernel-mtk"
+           path="kernel/motorola/mt6878"
+           remote="motorola"
+           revision="0ca1736f92b89c70a2bd72792d131e2d92dffe46" />
+  <project name="kernel-kernel_device_modules-6.1"
+           path="kernel/motorola/mt6878-modules"
+           remote="motorola"
+           revision="3921b5812fddc16914a621d1b7c2400021d5c2f4" />
+  <project name="android_hardware_mediatek"
+           path="hardware/mediatek"
+           remote="lineage-mtk"
+           revision="43d88bb61a8689d75f57e98ffd4115a970832648" />
+  <project name="android_device_mediatek_sepolicy_vndr"
+           path="device/mediatek/sepolicy_vndr"
+           remote="lineage-mtk"
+           revision="79717c3d8904a7547b4d923cdbe72c0860f1a486" />
+  <!-- eSIM manager (GPL-3.0). Master includes 89d677e (removable eUICC fix),
+       so the 16.0 cherry-pick patch is not needed here. -->
+  <project name="OpenEUICC"
+           path="packages/apps/OpenEUICC"
+           remote="angry"
+           sync-s="true"
+           revision="89d677e07d0ebbd2d157ede2cb31f76aec737e3a" />
+  <project name="android_prebuilts_openeuicc-deps"
+           path="prebuilts/openeuicc-deps"
+           remote="angry"
+           revision="540216793010cabc49782bd01844cd8dd28a4c7c" />
+</manifest>

@@ -1,4 +1,4 @@
-# crDroid 12 for Motorola Edge 50 Neo (`vienna`)
+# crDroid 12 / 13 for Motorola Edge 50 Neo (`vienna`)
 
 > [!CAUTION]
 > **This port is "vibe coded": it was built almost entirely by AI coding
@@ -9,7 +9,8 @@
 > here as experimental, check it yourself before relying on it, and do not use
 > this ROM on a phone you cannot afford to lose or restore.
 
-An unofficial port of **crDroid 12 (Android 16)** to the Motorola Edge 50 Neo,
+An unofficial port of **crDroid 12 (Android 16)** and, as a pre-release,
+**crDroid 13 (Android 17)** to the Motorola Edge 50 Neo,
 **XT2409-1 RETEU** (MediaTek Dimensity 7300 / MT6878). crDroid's system,
 system_ext and product images run on top of the phone's unmodified stock
 Motorola boot, vendor and kernel images (firmware `W1UIS36H.39-25-8`).
@@ -50,9 +51,21 @@ Other variants may be portable by building against their own stock firmware
 issue with your model number (`ro.boot.hardware.sku`), region and firmware
 version instead of flashing, and keep your stock firmware at hand.
 
+## crDroid 13 (Android 17) pre-release
+
+Built from crDroid `17.0` (Lineage 24.0, `CP2A.260605.016`) on the same stock
+base. On 2026-10-25 it was flashed over crDroid 12 **without a wipe** on the
+developer's phone and booted with data and apps intact: SELinux enforcing,
+LTE on both SIMs, VoLTE (IMS) registered on both, Wi-Fi on. Android 17's VINTF
+check accepts the stock Android 16 vendor and kernel. **Everything else in the
+table below was tested on crDroid 12 only** and still has to be retested on
+13, in particular video calls (they use a compatibility shim for a stock
+MediaTek library, `patches/17.0/frameworks-av-audiotrack-a16-ctor-compat.patch`)
+and the fingerprint patch. Use crDroid 12 if you need a tested system.
+
 ## What works
 
-Tested on 2026-10-04 on XT2409-1 RETEU, stock base `W1UIS36H.39-25-8`:
+Tested on crDroid 12, 2026-10-04, on XT2409-1 RETEU, stock base `W1UIS36H.39-25-8`:
 
 | Area | Status | Notes |
 | --- | --- | --- |
@@ -153,11 +166,21 @@ of several hundred GB and several hours of build time.
    For later rebuilds, `systemimage systemextimage productimage
    vbmetasystemimage` is enough.
 
+**crDroid 13 (Android 17):** sync manifest branch `17.0` into `crdroid17/`
+with `local_manifests/vienna-sources-17.xml`, copy the same device tree,
+apply `patches/17.0/*` (same repo naming; the APN, album-art and OpenEUICC
+patches are not needed there) and build with
+`CRDROID_DIR=crdroid17 TARGET_RELEASE=cp2a bash tools/build_systemimage.sh target-files-package`.
+Flash the `system`, `system_ext` and `product` images from the target-files
+`IMAGES/` directory; the copies in `out/target/product/vienna/` do not match
+the packaged `vbmeta_system`. See the end of the
+[bring-up log](docs/BRINGUP_LOG.md) for details.
+
 ## Installing
 
 ### Fastboot package (recommended)
 
-A prebuilt package (`crdroid-12-vienna-<date>-fastboot.zip`) contains the
+A prebuilt package (`crdroid-<12|13>-vienna-<date>-fastboot.zip`) contains the
 tested image set, `flash.sh` (Linux/macOS), `flash.bat` (Windows) and a
 README. With the phone in bootloader mode:
 

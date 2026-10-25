@@ -1,0 +1,41 @@
+diff --git a/media/libaudioclient/AudioTrack.cpp b/media/libaudioclient/AudioTrack.cpp
+index 2b0c8ee..d50c428 100644
+--- a/media/libaudioclient/AudioTrack.cpp
++++ b/media/libaudioclient/AudioTrack.cpp
+@@ -274,6 +274,36 @@ AudioTrack::AudioTrack(
+         doNotReconnect, maxRequiredSpeed, selectedDeviceId, codecProvenance);
+ }
+ 
++// Android 16 ABI of the constructor above (no codecProvenance), still imported
++// by prebuilt MediaTek video telephony blobs (libsink). They allocate 1456
++// bytes for the object, more than sizeof(AudioTrack) here.
++extern "C" void
++_ZN7android10AudioTrackC1E19audio_stream_type_tj14audio_format_t20audio_channel_mask_tm20audio_output_flags_tRKNS_2wpINS0_19IAudioTrackCallbackEEEi15audio_session_tNS0_13transfer_typeEPK20audio_offload_info_tRKNS_7content22AttributionSourceStateEPK18audio_attributes_tbfi(
++        AudioTrack* self,
++        audio_stream_type_t streamType,
++        uint32_t sampleRate,
++        audio_format_t format,
++        audio_channel_mask_t channelMask,
++        size_t frameCount,
++        audio_output_flags_t flags,
++        const wp<AudioTrack::IAudioTrackCallback>& callback,
++        int32_t notificationFrames,
++        audio_session_t sessionId,
++        AudioTrack::transfer_type transferType,
++        const audio_offload_info_t* offloadInfo,
++        const AttributionSourceState& attributionSource,
++        const audio_attributes_t* pAttributes,
++        bool doNotReconnect,
++        float maxRequiredSpeed,
++        audio_port_handle_t selectedDeviceId)
++{
++    static_assert(sizeof(AudioTrack) <= 1456);
++    new (self) AudioTrack(streamType, sampleRate, format, channelMask, frameCount, flags,
++            callback, notificationFrames, sessionId, transferType, offloadInfo,
++            attributionSource, pAttributes, doNotReconnect, maxRequiredSpeed,
++            selectedDeviceId);
++}
++
+ AudioTrack::AudioTrack(
+         audio_stream_type_t streamType,
+         uint32_t sampleRate,

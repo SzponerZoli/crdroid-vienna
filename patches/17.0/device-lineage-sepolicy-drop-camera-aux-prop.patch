@@ -1,0 +1,15 @@
+diff --git a/common/private/property_contexts b/common/private/property_contexts
+index 006fed5..8e4add7 100644
+--- a/common/private/property_contexts
++++ b/common/private/property_contexts
+@@ -8,7 +8,9 @@ bluetooth.hci.disabled_commands        u:object_r:bluetooth_config_prop:s0
+ # Camera
+ persist.vendor.camera.privapp.list     u:object_r:camera2_extensions_prop:s0
+ vendor.camera.aux.packageexcludelist   u:object_r:camera2_extensions_prop:s0
+-vendor.camera.aux.packagelist          u:object_r:camera2_extensions_prop:s0
++# vienna: defined by the stock Motorola vendor_property_contexts;
++# a second system_ext definition makes init abort (duplicate prefix).
++# vendor.camera.aux.packagelist          u:object_r:camera2_extensions_prop:s0
+ vendor.camera.skip_unconfigure.packagelist  u:object_r:camera2_extensions_prop:s0
+ 
+ # Custom legal URL

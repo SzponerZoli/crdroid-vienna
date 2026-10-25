@@ -484,3 +484,107 @@ Open: the recovery on the device is the permissive debug `perm3`
 - Status: built, NOT yet flashed or tested. Next: flash system, system_ext and
   vbmeta_system, then repeat the 10-unlock test and compare capture timing and
   quality. Consider re-enrolling the fingerprint afterwards.
+
+## 2026-10-15: eSIM (work in progress, uncommitted build state)
+
+- Hardware: slot 1 is an embedded eUICC (`ro.vendor.hw.esim=true`), MEP mode 3
+  (MEP-B) per the MTK RIL; the RIL reports it as `isRemovable=true`. The
+  owner's Telekom HU profile lives on it and works as a normal SIM.
+- Stock LPA is EuiccGoogle (needs real GMS). Added OpenEUICC (pinned
+  `2a85b8d`, last pre-SDK-37 commit; deps `67a341e`) plus upstream fix
+  `89d677e` cherry-picked (`patches/packages-apps-OpenEUICC-dont-ignore-removable-euicc.patch`)
+  and `android.hardware.telephony.euicc` in system_ext. Flashed build (22:32)
+  has OpenEUICC without that fix.
+- Blocker: every ISD-R `SIM_OPEN_CHANNEL` on slot 1 is rejected by the modem
+  (MIPC CNF error 2, SW FFFF, i.e. never reaches the card), via both
+  TelephonyManager and OMAPI, also right after boot. Stock telephony-common
+  sends the identical request (ApduSender p2=0, same RIL path), so the
+  difference must be modem state/config. `enableEuiccSupport`
+  (`AT+ESBP=5,"SBP_SIM_EUICC_SUPPORT",1`) in libmtkmipc-ril.so is never
+  called. Vodafone EASY uses the EuiccManager carrier flow, which OpenEUICC
+  stubs (`onGetDownloadableSubscriptionMetadata`).
+- Pending in device.mk (not built yet): `ro.vendor.mtk_telephony_add_on_policy=1`
+  and `ro.telephony.esim_slot_id=1` from stock (the RIL uses the policy only
+  for ECC/unsol filtering, not SIM channels).
+- Next: test open-channel variants from adb (`service call phone`), check the
+  SBP_SIM_EUICC_SUPPORT state, or capture the same log on stock.
+- Caution: turning the Telekom SIM off in Settings set
+  `areUiccApplicationsEnabled=0` and hid it; restored with
+  `service call isub 46 i32 1 i32 2`.
+
+## 2026-10-25: crDroid 13 (Android 17) port started
+
+- crDroid 13 = manifest branch `17.0` (`88b3209`, 2026-10-21), Android 17
+  `android-17.0.0_r1`, Lineage 24.0, lunch release **`cp2a`**
+  (`BUILD_ID=CP2A.260605.016`). Separate checkout `crdroid17/` (ignored); the
+  crDroid 12 tree `crdroid/` and its `out/` are untouched. A `--reference` to
+  `crdroid/` failed because that checkout is shallow (`depth=1`).
+- Local manifest `local_manifests/vienna-sources-17.xml`: hardware/mediatek
+  and sepolicy_vndr on `lineage-24.0`, OpenEUICC master `89d677e` (already
+  contains the removable-eUICC fix), openeuicc-deps master. Prebuilts VNDK
+  v31-v34 are still in the 17.0 manifest.
+- Device tree, vendor tree and prebuilts copied from `crdroid/` unchanged.
+  WebView arm64 LFS object fetched with `tools/fetch_lfs_object.py`.
+- Ported patches are in `patches/17.0/` (apply to `crdroid17/<repo>`). The
+  sepolicy camera-aux patch was redone (label is now `camera2_extensions_prop`);
+  build/make and the UDFPS patch needed one hunk moved each. Dropped: the
+  album-art patch (fixed upstream), the APN patch (vendor/apn now merges AOSP
+  upstream, which has Yettel online/mms/ims and no Pannon entries) and the
+  OpenEUICC patch.
+- Build: `CRDROID_DIR=crdroid17 TARGET_RELEASE=cp2a bash tools/build_systemimage.sh`.
+- Not done: build result, cross-partition property_contexts check against
+  stock vendor, VINTF check, target-files, any flash. Upgrading the phone's
+  Android 16 `/data` to 17 is untested; plan a backup before any flash.
+
+### 2026-10-25 (evening): first crDroid 13 system images built
+
+- `system.img`, `system_ext.img`, `product.img` built (Android 17, SDK 37).
+  Host only, not flashed. The UDFPS/HBM SystemUI patch compiles on 17.
+- Stock `libsink.so` (system_ext, MTK video telephony, used by `libimsma`)
+  imports the Android 16 16-argument `AudioTrack` constructor; Android 17 added
+  `codecProvenance`. `patches/17.0/frameworks-av-audiotrack-a16-ctor-compat.patch`
+  exports the old symbol from libaudioclient and forwards to the new one. The
+  blob allocates 1456 bytes for the object (stock Moto AudioTrack is larger);
+  AOSP 17 needs 1368 (16 was 1328), so placement-construct is safe; a
+  `static_assert` guards it. Video calls must be retested on the phone.
+- Cross-partition property_contexts duplicates (built system/system_ext/product
+  vs stock vendor/odm): 0, same as crDroid 12.
+- Build host incidents: two power losses and one freeze (QPI machine-check
+  errors after a CPU upgrade). Damage found: empty ThinLTO cache entries in
+  `out/soong/thinlto-cache` (produced an empty `libandroid` NDK stub) and a
+  0-byte jar. After an unclean shutdown, delete zero-size `llvmcache-*` entries
+  and outputs written in the last minutes before the crash.
+- Build with `-j$(nproc)` (now 16) via `tools/build_systemimage.sh`;
+  `NINJA_ARGS="-k 0"` collects all failures in one run.
+- Target-files package built and validated (2026-10-25 18:32, 4.2 GB, `unzip
+  -tq` OK). `check_target_files_vintf -v`: **COMPATIBLE**. Rollback 25,
+  Motorola AVB props, `main_a`/`main_b` sizes, stock boot payloads all match.
+- Flash set and draft plan: `recovery-artifacts/crdroid13/README.md`. Root
+  vbmeta `recovery-artifacts/crdroid13/vbmeta-crdroid13.img` (callfix root +
+  crDroid 13 product). Full `avbtool verify_image` chain passed. Use the
+  target-files `IMAGES/` system/system_ext/product: the `out/target/product`
+  copies differ and do not match `vbmeta_system`. Not flashed.
+
+## 2026-10-25 19:03: crDroid 13 flashed to slot A WITHOUT wipe — boots
+
+- Owner had no backup and asked not to wipe. Before flashing: internal storage
+  (741 files, 7.4 GB, excl. `Android/data`) pulled to
+  `~/vienna-backup-2026-10-25/` (outside the repo). No root on the crDroid 12
+  build (`ro.debuggable=0`), so app data was not backed up from the host.
+- Return path frozen in `recovery-artifacts/crdroid12-return/` (SHA256SUMS):
+  the exact crDroid 12 system/system_ext/product/vbmeta_system the phone ran
+  plus `vbmeta.img` = callfix root. Phone digest `ro.boot.vbmeta.digest`
+  matched callfix (`f7673bfd…`) and the full avbtool chain verified.
+- fastbootd: userspace, slot a, `unlocked: yes`, no snapshot. Flashed the
+  `recovery-artifacts/crdroid13/README.md` set (system, system_ext, product,
+  vbmeta_system from target-files IMAGES, vbmeta-crdroid13.img). No wipe;
+  boot, vendor_boot (clean recovery), vendor, dlkm untouched.
+- Result: ADB after 66 s, `boot_completed=1`, Android 17 / crDroid 13.0,
+  SELinux enforcing. Data upgraded in place: user RUNNING_UNLOCKED, all 74 apps,
+  DCIM present. Both SIMs LTE (Yettel HU, Telekom HU), `isImsRegistered=true`
+  on both, IMS service running, Wi-Fi on, fingerprint HAL registered, empty
+  crash buffer. Denials as on 12 (vtservice ccci/hwservicemanager_prop,
+  batt_health default_prop).
+- Owner tests still needed: calls, video call (libsink AudioTrack shim),
+  camera, GPS, fingerprint unlock rate, BT audio, NFC, eSIM, charging.
+- Going back to crDroid 12 now needs a wipe (data is Android 17 format).

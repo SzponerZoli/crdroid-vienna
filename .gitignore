@@ -6,6 +6,7 @@ __pycache__/
 *.pyc
 tools/bin/
 crdroid/
+crdroid17/
 device/motorola/vienna/prebuilts/
 vendor/motorola/vienna/proprietary/
 device/motorola/vienna/microg/*.apk

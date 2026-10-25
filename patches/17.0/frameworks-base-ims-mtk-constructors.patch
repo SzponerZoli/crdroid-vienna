@@ -1,0 +1,43 @@
+diff --git a/telephony/java/android/telephony/ims/ImsExternalCallState.java b/telephony/java/android/telephony/ims/ImsExternalCallState.java
+index d45110772..63871dd43 100644
+--- a/telephony/java/android/telephony/ims/ImsExternalCallState.java
++++ b/telephony/java/android/telephony/ims/ImsExternalCallState.java
+@@ -112,6 +112,17 @@ public final class ImsExternalCallState implements Parcelable {
+         Rlog.d(TAG, "ImsExternalCallState = " + this);
+     }
+ 
++    /**
++     * Motorola/MediaTek IMS compatibility: prebuilt ImsService passes an extra OEM flag,
++     * which AOSP does not use.
++     * @hide
++     */
++    public ImsExternalCallState(int callId, Uri address, Uri localAddress,
++            boolean isPullable, @ExternalCallState int callState, int callType,
++            boolean isCallheld, boolean oemFlag) {
++        this(callId, address, localAddress, isPullable, callState, callType, isCallheld);
++    }
++
+     /**
+      * Create a new ImsExternalCallState instance to contain Multiendpoint Dialog information.
+      * @param callId The unique ID of the call, which will be used to identify this external
+diff --git a/telephony/java/android/telephony/ims/ImsReasonInfo.java b/telephony/java/android/telephony/ims/ImsReasonInfo.java
+index 67acda053..8cfe66a0b 100644
+--- a/telephony/java/android/telephony/ims/ImsReasonInfo.java
++++ b/telephony/java/android/telephony/ims/ImsReasonInfo.java
+@@ -1381,6 +1381,16 @@ public final class ImsReasonInfo implements Parcelable {
+         mExtraMessage = extraMessage;
+     }
+ 
++    /**
++     * Motorola/MediaTek IMS compatibility: prebuilt ImsService passes the network call fail
++     * cause as a fourth argument. It is not used by AOSP.
++     * @hide
++     */
++    public ImsReasonInfo(int code, int extraCode, @Nullable String extraMessage,
++            int networkCauseCode) {
++        this(code, extraCode, extraMessage);
++    }
++
+     /**
+      * @return an integer representing more information about the completion of an operation.
+      */
