@@ -588,3 +588,24 @@ Open: the recovery on the device is the permissive debug `perm3`
 - Owner tests still needed: calls, video call (libsink AudioTrack shim),
   camera, GPS, fingerprint unlock rate, BT audio, NFC, eSIM, charging.
 - Going back to crDroid 12 now needs a wipe (data is Android 17 format).
+
+## 2026-10-25 (evening): fingerprint enrollment fix on crDroid 13
+
+- Symptom: about half of the enrollment touches said "Fingerprint not
+  recognized". Lock-screen unlock was fine.
+- Cause: Android 17 `UdfpsController.onFingerDown` sends `onPointerDown` to the
+  HAL before `configureDisplay`. The RBS HAL starts the capture ~15-20 ms after
+  `onPointerDown`, while `HIGH_BRIGHT_FOD` completed 42-86 ms after finger down,
+  so every capture began dark. Unlock retries 3 times per touch (`do_verify`),
+  enrollment captures once: 11/29 touches had `opm_get_image quality = 255`.
+- Fix (`patches/17.0/frameworks-base-systemui-udfps-moto-panel-hbm.patch`):
+  `config_udfpsPointerDownAfterIllumination` (enabled in the device overlay)
+  holds `onPointerDown` back until the display-mode callback, keeps only the
+  latest event, and skips `onPointerUp` if the down was never sent.
+- Result: HBM complete -> `onPointerDown` < 1 ms -> capture 15 ms later.
+  Accepted touches 13/29 -> 60/98, dark images 11 -> 1; three fingers enrolled
+  to 100%. Owner: "usable, not the best". Remaining rejects are mostly HAL
+  status 7 (acquired 3, IMAGER_DIRTY, `bad_img` counting) — not investigated
+  (screen protector, smudge or HBM level are candidates).
+- Flashed system/system_ext/vbmeta_system only (root vbmeta unchanged; phone
+  digest `2e29aec6…` matched before flashing). Logs: `stock-info/fp13/`.

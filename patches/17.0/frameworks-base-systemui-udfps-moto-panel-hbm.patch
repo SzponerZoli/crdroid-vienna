@@ -1,8 +1,8 @@
 diff --git a/packages/SystemUI/res/values/lineage_config.xml b/packages/SystemUI/res/values/lineage_config.xml
-index 39a6955a0..0bde62d6e 100644
+index 39a6955a0..4a593a446 100644
 --- a/packages/SystemUI/res/values/lineage_config.xml
 +++ b/packages/SystemUI/res/values/lineage_config.xml
-@@ -18,6 +18,27 @@
+@@ -18,6 +18,31 @@
      <!-- Color of the UDFPS pressed view -->
      <color name="config_udfpsColor">#ffffffff</color>
  
@@ -18,6 +18,10 @@ index 39a6955a0..0bde62d6e 100644
 +         turning illumination off after the first image capture -->
 +    <bool name="config_udfpsIlluminateUntilFingerUp">false</bool>
 +
++    <!-- Whether to send onPointerDown to the fingerprint HAL only once the UDFPS display mode
++         is enabled, for HALs that capture right on pointer down without waiting for UI_READY -->
++    <bool name="config_udfpsPointerDownAfterIllumination">false</bool>
++
 +    <!-- Approximate panel luminance in HIGH_BRIGHT_FOD mode, used to size the dim layer -->
 +    <integer name="config_udfpsMotoPanelHbmNits">1600</integer>
 +
@@ -31,19 +35,24 @@ index 39a6955a0..0bde62d6e 100644
      <bool name="config_udfpsFrameworkDimming">false</bool>
  
 diff --git a/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsController.java b/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsController.java
-index 80a815505..5c2736e46 100644
+index 80a815505..7e0237385 100644
 --- a/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsController.java
 +++ b/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsController.java
-@@ -246,6 +246,8 @@ public class UdfpsController implements DozeReceiver, Dumpable {
+@@ -246,6 +246,13 @@ public class UdfpsController implements DozeReceiver, Dumpable {
      private boolean mKeyguardCallbackRegistered = false;
  
      private boolean mDisableSmartPixels;
 +    // Keep the UDFPS display mode on until finger up instead of the first capture.
 +    private boolean mIlluminateUntilFingerUp;
++    // Hold onPointerDown back until the display mode is on: some HALs start the capture
++    // on pointer down without waiting for UI_READY, and enrollment only captures once.
++    private boolean mPointerDownAfterIllumination;
++    private boolean mIlluminated;
++    @Nullable private Runnable mPendingPointerDown;
      private boolean mSmartPixelsFlag;
      private boolean mSmartPixelsEnabled;
  
-@@ -446,7 +448,10 @@ public class UdfpsController implements DozeReceiver, Dumpable {
+@@ -446,7 +453,10 @@ public class UdfpsController implements DozeReceiver, Dumpable {
                      }
                      mAcquiredReceived = true;
                      final View view = mOverlay.getTouchOverlay();
@@ -55,15 +64,82 @@ index 80a815505..5c2736e46 100644
                      tryAodSendFingerUp();
                  });
              }
-@@ -887,6 +892,8 @@ public class UdfpsController implements DozeReceiver, Dumpable {
+@@ -887,6 +897,10 @@ public class UdfpsController implements DozeReceiver, Dumpable {
              com.android.systemui.res.R.bool.config_udfpsMtkGhbmDimming);
  
          mDisableSmartPixels = mContext.getResources().getBoolean(com.android.systemui.res.R.bool.config_disableSmartPixelsOnUDFPS);
 +        mIlluminateUntilFingerUp = mContext.getResources().getBoolean(
 +                com.android.systemui.res.R.bool.config_udfpsIlluminateUntilFingerUp);
++        mPointerDownAfterIllumination = mContext.getResources().getBoolean(
++                com.android.systemui.res.R.bool.config_udfpsPointerDownAfterIllumination);
  
          if (com.android.internal.util.crdroid.Utils.isPackageInstalled(mContext,
                  "com.crdroid.udfps.animations")) {
+@@ -1059,6 +1073,7 @@ public class UdfpsController implements DozeReceiver, Dumpable {
+         if (!isOptical() || !(view instanceof UdfpsTouchOverlay udfpsView)) {
+             return;
+         }
++        mIlluminated = false;
+         if (udfpsView.isDisplayConfigured()) {
+             udfpsView.unconfigureDisplay();
+         }
+@@ -1271,8 +1286,17 @@ public class UdfpsController implements DozeReceiver, Dumpable {
+             mDeviceEntryFaceAuthInteractor.onUdfpsSensorTouched();
+         }
+         mOnFingerDown = true;
+-        mFingerprintManager.onPointerDown(requestId, mSensorProps.sensorId, pointerId, x, y,
+-                minor, major, orientation, time, gestureStart, isAod);
++        final View touchOverlay = mOverlay.getTouchOverlay();
++        if (mPointerDownAfterIllumination && !mIlluminated && !mIgnoreRefreshRate
++                && isOptical() && touchOverlay instanceof UdfpsTouchOverlay) {
++            // Sent from the configureDisplay callback below; keep only the latest event.
++            mPendingPointerDown = () -> mFingerprintManager.onPointerDown(requestId,
++                    mSensorProps.sensorId, pointerId, x, y, minor, major, orientation, time,
++                    gestureStart, isAod);
++        } else {
++            mFingerprintManager.onPointerDown(requestId, mSensorProps.sensorId, pointerId, x, y,
++                    minor, major, orientation, time, gestureStart, isAod);
++        }
+ 
+         if (mUseMtkGhbmDimming && mOverlay != null) {
+             View hbmView = mOverlay.getHbmView(); // Ensure UdfpsControllerOverlay exposes this
+@@ -1305,7 +1329,18 @@ public class UdfpsController implements DozeReceiver, Dumpable {
+             if (mIgnoreRefreshRate) {
+                 dispatchOnUiReady(requestId);
+             } else {
+-                udfpsView.configureDisplay(() -> dispatchOnUiReady(requestId));
++                udfpsView.configureDisplay(() -> {
++                    mIlluminated = true;
++                    if (mPendingPointerDown != null) {
++                        final Runnable pointerDown = mPendingPointerDown;
++                        mPendingPointerDown = null;
++                        if (mOnFingerDown && mOverlay != null
++                                && mOverlay.matchesRequestId(requestId)) {
++                            pointerDown.run();
++                        }
++                    }
++                    dispatchOnUiReady(requestId);
++                });
+             }
+         }
+ 
+@@ -1355,9 +1390,14 @@ public class UdfpsController implements DozeReceiver, Dumpable {
+             mSmartPixelsFlag = false;
+         }
+ 
++        // A pointer down still held back by mPointerDownAfterIllumination never reached the HAL.
++        final boolean pointerDownSent = mPendingPointerDown == null;
++        mPendingPointerDown = null;
+         if (mOnFingerDown) {
+-            mFingerprintManager.onPointerUp(requestId, mSensorProps.sensorId, pointerId, x,
+-                    y, minor, major, orientation, time, gestureStart, isAod);
++            if (pointerDownSent) {
++                mFingerprintManager.onPointerUp(requestId, mSensorProps.sensorId, pointerId, x,
++                        y, minor, major, orientation, time, gestureStart, isAod);
++            }
+             if (isOptical()) {
+                 for (Callback cb : mCallbacks) {
+                     cb.onFingerUp();
 diff --git a/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsDisplayMode.kt b/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsDisplayMode.kt
 index 670a8e638..2db357a95 100644
 --- a/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsDisplayMode.kt

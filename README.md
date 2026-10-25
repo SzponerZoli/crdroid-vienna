@@ -60,8 +60,10 @@ LTE on both SIMs, VoLTE (IMS) registered on both, Wi-Fi on. Android 17's VINTF
 check accepts the stock Android 16 vendor and kernel. **Everything else in the
 table below was tested on crDroid 12 only** and still has to be retested on
 13, in particular video calls (they use a compatibility shim for a stock
-MediaTek library, `patches/17.0/frameworks-av-audiotrack-a16-ctor-compat.patch`)
-and the fingerprint patch. Use crDroid 12 if you need a tested system.
+MediaTek library, `patches/17.0/frameworks-av-audiotrack-a16-ctor-compat.patch`).
+Fingerprint unlock works; enrollment works but rejects about a third of the
+touches ("Fingerprint not recognized", the HAL reports a dirty imager), so it
+takes more touches than on stock. Use crDroid 12 if you need a tested system.
 
 ## What works
 

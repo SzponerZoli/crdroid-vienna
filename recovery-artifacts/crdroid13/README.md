@@ -1,13 +1,29 @@
-# crDroid 13 (Android 17) flash set for XT2409-1 RETEU — NOT YET FLASHED
+# crDroid 13 (Android 17) flash set for XT2409-1 RETEU
 
 Built 2026-10-25 from `crdroid17/` (manifest 17.0, `CP2A.260605.016`, userdebug,
-test keys). Host-validated only; it has never booted.
+test keys). Flashed to slot A on 2026-10-25 (no wipe) and boots.
+
+**Current set (r2, 20:00, fingerprint enrollment fix):** system, system_ext and
+vbmeta_system from `crdroid17/out/target/product/vienna/` (rebuilt together with
+`systemimage systemextimage vbmetasystemimage`); product, vbmeta and vendor_boot
+unchanged from r1 below. Packaged as `crdroid-13-vienna-20261025.2-fastboot.zip`.
+
+| Partition | SHA-256 (r2) |
+| --- | --- |
+| system | `aced8595ce99092d42c60980e3340d1518a187d029af1938e27e371d151660fe` |
+| system_ext | `a408c59ede6b55297b6ea0c875c5c0f6d9b87cf19e1b43258ed21c88508fc0e4` |
+| vbmeta_system | `9173d656cffd9397ba9b2fe298d0ae79d8c07d791474ec238453f593af6e320e` |
+
+## r1 (first flash)
 
 ## Images
 
-Use the **target-files `IMAGES/` copies** for system, system_ext and product.
-`out/target/product/vienna/{system,system_ext,product}.img` differ (packaging
-regenerates them) and do **not** match `vbmeta_system.img`.
+For r1, use the **target-files `IMAGES/` copies** for system, system_ext and
+product: after `target-files-package`, `out/target/product/vienna/` copies
+differ (packaging regenerates them) and do **not** match the packaged
+`vbmeta_system.img`. (r2 rebuilt the `out/` system, system_ext and
+vbmeta_system together, so those three match each other; product still comes
+from `IMAGES/`, which is what the root vbmeta covers.)
 
 `IMAGES/` = `crdroid17/out/target/product/vienna/obj/PACKAGING/target_files_intermediates/lineage_vienna-target_files/IMAGES/`
 

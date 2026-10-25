@@ -14,6 +14,10 @@
          the sensor lit until finger up. -->
     <bool name="config_udfpsIlluminateUntilFingerUp">true</bool>
 
+    <!-- The RBS HAL starts capturing ~18 ms after onPointerDown, before HIGH_BRIGHT_FOD is on
+         (42-86 ms); enrollment captures once per touch, so dark first frames fail. -->
+    <bool name="config_udfpsPointerDownAfterIllumination">true</bool>
+
     <!-- Brightness to nits, from the display device config (dumpsys display) -->
     <string-array name="config_udfpsMotoPanelBrightnessNits" translatable="false">
         <item>0.0,3.1</item>
