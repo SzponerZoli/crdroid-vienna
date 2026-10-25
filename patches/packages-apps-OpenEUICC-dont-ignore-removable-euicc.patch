@@ -1,0 +1,49 @@
+From 0af39aa21cb54aae1700057768d2e3f0cedf9f91 Mon Sep 17 00:00:00 2001
+From: Macktherealonereally <macdev@mackthessd.org>
+Date: Mon, 28 Sep 2026 15:43:01 +0200
+Subject: [PATCH] OpenEuiccService: Don't ignore the only removable eUICC
+ (#358)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+`shouldIgnoreSlot()` returns **true for slots to ignore**. On devices without an internal eUICC, its own comment says it should *expose* the first removable eUICC to the system:
+
+```kotlin
+// Otherwise, we can report at least one removable eUICC to the system without confusing it too much.
+telephonyManager.uiccCardsInfoCompat.firstOrNull { it.isEuicc }?.physicalSlotIndex == physicalSlotId
+```
+
+The comparison is inverted, so exactly that slot is ignored. Every `EuiccService` call on it (`onGetEid`, `onGetDownloadableSubscriptionMetadata`, `onDownloadSubscription`, `onSwitchToSubscription…`) returns `RESULT_FIRST_USER` within a few milliseconds.
+
+**How it showed up:** on a Samsung Galaxy S21 (SM-G991B, LineageOS 23.2, OpenEUICC as system LPA), the Samsung RIL reports the built-in eUICC as *removable* (`isRemovable=true`), so `hasInternalEuicc` is false. `EuiccManager` downloads from carrier apps failed immediately. The log showed `OpenEuiccService: onGetDownloadableSubscriptionMetadata slotId=1 portIndex=0 ...`, and 11 ms later the call returned an error to EuiccController without a single APDU being sent (the app showed its generic install error). Meanwhile the same eUICC worked fine inside the OpenEUICC UI, which doesn't go through `shouldIgnoreSlot()`.
+
+**Fix:** `==` → `!=`.
+
+**Testing:** with the fix, the platform download flow reaches the eUICC (metadata → carrier-privilege check → download). On 2026-09-27 a travel-eSIM provider's app installed its profile end to end through `EuiccManager` on that phone (the app-side changes are in a separate PR).
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Reviewed-on: https://gitea.angry.im/PeterCxy/OpenEUICC/pulls/358
+Co-authored-by: Macktherealonereally <macdev@mackthessd.org>
+Co-committed-by: Macktherealonereally <macdev@mackthessd.org>
+---
+ .../main/java/im/angry/openeuicc/service/OpenEuiccService.kt    | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/app/src/main/java/im/angry/openeuicc/service/OpenEuiccService.kt b/app/src/main/java/im/angry/openeuicc/service/OpenEuiccService.kt
+index 849d634..4f7124a 100644
+--- a/app/src/main/java/im/angry/openeuicc/service/OpenEuiccService.kt
++++ b/app/src/main/java/im/angry/openeuicc/service/OpenEuiccService.kt
+@@ -40,7 +40,7 @@ class OpenEuiccService : EuiccService(), OpenEuiccContextMarker {
+         } else {
+             // Otherwise, we can report at least one removable eUICC to the system without confusing
+             // it too much.
+-            telephonyManager.uiccCardsInfoCompat.firstOrNull { it.isEuicc }?.physicalSlotIndex == physicalSlotId
++            telephonyManager.uiccCardsInfoCompat.firstOrNull { it.isEuicc }?.physicalSlotIndex != physicalSlotId
+         }
+ 
+     private data class EuiccChannelManagerContext(
+-- 
+2.56.0
+

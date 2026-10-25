@@ -8,6 +8,7 @@
 <manifest>
   <remote name="motorola" fetch="https://github.com/MotorolaMobilityLLC" />
   <remote name="lineage-mtk" fetch="https://github.com/LineageOS" />
+  <remote name="angry" fetch="https://gitea.angry.im/PeterCxy" />
   <project name="kernel-mtk"
            path="kernel/motorola/mt6878"
            remote="motorola"
@@ -24,4 +25,15 @@
            path="device/mediatek/sepolicy_vndr"
            remote="lineage-mtk"
            revision="1b12039600b2ad9b1a435682bc8f61fd1f0b111d" />
+  <!-- eSIM manager (GPL-3.0); see device.mk. Pinned before upstream moved
+       to SDK 37 (Android 17), which this Android 16 tree cannot build. -->
+  <project name="OpenEUICC"
+           path="packages/apps/OpenEUICC"
+           remote="angry"
+           sync-s="true"
+           revision="2a85b8dad6000eea9dd622a468b7558e79933b2a" />
+  <project name="android_prebuilts_openeuicc-deps"
+           path="prebuilts/openeuicc-deps"
+           remote="angry"
+           revision="67a341e9cfbaed43da7e5a281f5cc7b8893fdc55" />
 </manifest>

@@ -73,6 +73,20 @@ PRODUCT_SYSTEM_PROPERTIES += \
     wifi.direct.interface=p2p0 \
     persist.vendor.wfc.sys_wfc_support=1
 
+# eSIM: the second slot is an embedded eUICC (ro.vendor.hw.esim). Stock manages
+# it with Google's LPA, which needs real Play services; use OpenEUICC instead.
+# The feature goes in system_ext so product.img (and the root vbmeta) stay put.
+PRODUCT_PACKAGES += \
+    OpenEUICC
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.telephony.euicc.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/permissions/android.hardware.telephony.euicc.xml
+
+# From stock system/build.prop and product/etc/build.prop. The MTK RIL reads
+# the add-on policy (1 = AOSP telephony, no MTK framework add-on).
+PRODUCT_SYSTEM_PROPERTIES += \
+    ro.vendor.mtk_telephony_add_on_policy=1 \
+    ro.telephony.esim_slot_id=1
+
 # microG (official release APKs, see microg/README.md)
 PRODUCT_PACKAGES += \
     GmsCore \

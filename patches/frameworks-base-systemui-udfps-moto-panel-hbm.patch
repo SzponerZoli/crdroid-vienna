@@ -1,8 +1,8 @@
 diff --git a/packages/SystemUI/res/values/lineage_config.xml b/packages/SystemUI/res/values/lineage_config.xml
-index ccb178f5d..e1238cdbf 100644
+index ccb178f5d..78c3f3d41 100644
 --- a/packages/SystemUI/res/values/lineage_config.xml
 +++ b/packages/SystemUI/res/values/lineage_config.xml
-@@ -18,6 +18,23 @@
+@@ -18,6 +18,27 @@
      <!-- Color of the UDFPS pressed view -->
      <color name="config_udfpsColor">#ffffffff</color>
  
@@ -13,6 +13,10 @@ index ccb178f5d..e1238cdbf 100644
 +    <!-- Whether to illuminate an optical UDFPS through the Motorola display panel HAL
 +         (HIGH_BRIGHT_FOD mode) with a dim layer around the sensor -->
 +    <bool name="config_udfpsMotoPanelHbm">false</bool>
++
++    <!-- Whether to keep an optical UDFPS illuminated until the finger is lifted, instead of
++         turning illumination off after the first image capture -->
++    <bool name="config_udfpsIlluminateUntilFingerUp">false</bool>
 +
 +    <!-- Approximate panel luminance in HIGH_BRIGHT_FOD mode, used to size the dim layer -->
 +    <integer name="config_udfpsMotoPanelHbmNits">1600</integer>
@@ -26,6 +30,40 @@ index ccb178f5d..e1238cdbf 100644
      <!-- Whether to enable framework dimming for UDFPS -->
      <bool name="config_udfpsFrameworkDimming">false</bool>
  
+diff --git a/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsController.java b/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsController.java
+index 57af042c3..851f00686 100644
+--- a/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsController.java
++++ b/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsController.java
+@@ -245,6 +245,8 @@ public class UdfpsController implements DozeReceiver, Dumpable {
+     private boolean mKeyguardCallbackRegistered = false;
+ 
+     private boolean mDisableSmartPixels;
++    // Keep the UDFPS display mode on until finger up instead of the first capture.
++    private boolean mIlluminateUntilFingerUp;
+     private boolean mSmartPixelsFlag;
+     private boolean mSmartPixelsEnabled;
+ 
+@@ -444,7 +446,10 @@ public class UdfpsController implements DozeReceiver, Dumpable {
+                     }
+                     mAcquiredReceived = true;
+                     final View view = mOverlay.getTouchOverlay();
+-                    unconfigureDisplay(view);
++                    // Some sensors capture again while the finger stays down; keep them lit.
++                    if (!mIlluminateUntilFingerUp) {
++                        unconfigureDisplay(view);
++                    }
+                     tryAodSendFingerUp();
+                 });
+             }
+@@ -882,6 +887,8 @@ public class UdfpsController implements DozeReceiver, Dumpable {
+         }
+ 
+         mDisableSmartPixels = mContext.getResources().getBoolean(com.android.systemui.res.R.bool.config_disableSmartPixelsOnUDFPS);
++        mIlluminateUntilFingerUp = mContext.getResources().getBoolean(
++                com.android.systemui.res.R.bool.config_udfpsIlluminateUntilFingerUp);
+ 
+         if (com.android.internal.util.crdroid.Utils.isPackageInstalled(mContext,
+                 "com.crdroid.udfps.animations")) {
 diff --git a/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsDisplayMode.kt b/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsDisplayMode.kt
 index 670a8e638..2db357a95 100644
 --- a/packages/SystemUI/src/com/android/systemui/biometrics/UdfpsDisplayMode.kt

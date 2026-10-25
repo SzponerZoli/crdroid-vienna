@@ -10,6 +10,10 @@
          HAL and dims the rest of the screen. -->
     <bool name="config_udfpsMotoPanelHbm">true</bool>
 
+    <!-- The RBS HAL may retry the capture while the finger stays down; stock keeps
+         the sensor lit until finger up. -->
+    <bool name="config_udfpsIlluminateUntilFingerUp">true</bool>
+
     <!-- Brightness to nits, from the display device config (dumpsys display) -->
     <string-array name="config_udfpsMotoPanelBrightnessNits" translatable="false">
         <item>0.0,3.1</item>
